@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ReactorWinUI.HotReload": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\adosp\\source\\repos\\tests\\ReactorWinUI\\ReactorWinUI.DemoApp\\bin\\x64\\Debug\\ReactorWinUI.DemoApp.exe"
+    }
+  }
+}
