@@ -45,7 +45,7 @@ namespace ReactorWinUI.HotReloader
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            var assemblyPath = @"C:\Users\adosp\source\repos\tests\ReactorWinUI\ReactorWinUI.DemoApp\bin\Debug\net5.0-windows10.0.18362.0\ReactorWinUI.DemoApp.dll";
+            var assemblyPath = @"C:\Users\adosp\source\repos\reactorui-winui\src\ReactorWinUI.DemoApp\bin\Debug\net5.0-windows10.0.18362.0\ReactorWinUI.DemoApp.dll";
 
             RxApplication.Create(assemblyPath).Run();
 

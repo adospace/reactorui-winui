@@ -11,11 +11,15 @@ namespace ReactorWinUI.DemoApp
     {
         public override VisualNode Render()
         {
-            return new RxTextBlock()
-                .Text("Hello World")
-                .FontSize(32)
-                .VCenter()
-                .HCenter();
+            return new RxStackPanel()
+            {
+                new RxTextBlock()
+                    .Text("Hello"),
+                new RxTextBlock()
+                    .Text("World")
+            }
+            .VCenter()
+            .HCenter();
         }
     }
 }
