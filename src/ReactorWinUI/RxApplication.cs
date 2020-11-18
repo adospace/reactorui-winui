@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Windows;
 
 using ReactorWinUI.Internals;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace ReactorWinUI
 {
@@ -25,6 +25,7 @@ namespace ReactorWinUI
         private bool _sleeping = true;
         private readonly DispatcherTimer _animationTimer = null;
         private UIElement _rootElement;
+        private Window _mainWindow;
 
         private RxApplication(Type rootComponentType, IRxApplicationHost applicationHost = null)
         {
@@ -64,13 +65,40 @@ namespace ReactorWinUI
         public static RxApplication Create<T>(IRxApplicationHost applicationHost = null) where T : RxComponent, new()
             => new RxApplication(typeof(T), applicationHost);
 
-        public static RxApplication Create(IRxApplicationHost applicationHost = null)
-        {
-            var componentType = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(_ => _.GetTypes())
-                .First(_ => _.GetCustomAttribute(typeof(EntryComponentAttribute)) != null);
+        //public static RxApplication Create(IRxApplicationHost applicationHost = null)
+        //{
+        //    var componentType = AppDomain.CurrentDomain.GetAssemblies()
+        //        .SelectMany(_ => _.GetTypes())
+        //        .First(_ => _.GetCustomAttribute(typeof(EntryComponentAttribute)) != null);
 
-            return new RxApplication(componentType, applicationHost);
+        //    return new RxApplication(componentType, applicationHost);
+        //}
+
+        public static RxApplication Create(string assemblyPath)
+        {
+            var assemblyPdbPath = Path.Combine(Path.GetDirectoryName(assemblyPath), Path.GetFileNameWithoutExtension(assemblyPath) + ".pdb");
+
+            var assembly = File.Exists(assemblyPdbPath) ?
+                Assembly.Load(File.ReadAllBytes(assemblyPath))
+                :
+                Assembly.Load(File.ReadAllBytes(assemblyPath), File.ReadAllBytes(assemblyPdbPath));
+
+            ComponentLoader.Instance = new AssemblyFileComponentLoader(assemblyPath);
+
+            string folderPath = Path.GetDirectoryName(assemblyPath);
+
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.AssemblyResolve += (object sender, ResolveEventArgs args) =>
+            {
+                string assemblyPath = Path.Combine(folderPath, new AssemblyName(args.Name).Name + ".dll");
+                if (!File.Exists(assemblyPath)) return null;
+                Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                return assembly;
+            };
+
+            var componentType = assembly.GetTypes().First(_ => _.GetCustomAttribute(typeof(EntryComponentAttribute)) != null);
+
+            return new RxApplication(componentType);
         }
 
         public RxApplication WithContext(string key, object value)
@@ -104,8 +132,15 @@ namespace ReactorWinUI
                 {
                     _applicationHost.SetRoot(rootElement);
                 }
-                else
+                else if (_mainWindow != null)
+                {
+                    _mainWindow.Content = rootElement;
+                }
+                else if (Window.Current != null)
+                {
                     Window.Current.Content = rootElement;
+                }
+                    
             }
             else
             {
@@ -142,8 +177,14 @@ namespace ReactorWinUI
 
         public IRxHostElement Run()
         {
+            if (Window.Current == null)
+            {
+                _mainWindow = new Window();
+            }
+
             if (_sleeping)
             {
+
                 if (_rootComponent == null)
                 {
                     if (ComponentLoader.Instance != null)
@@ -167,7 +208,14 @@ namespace ReactorWinUI
                 }
             }
 
-            Window.Current.Activate();
+            if (Window.Current != null)
+            {
+                Window.Current.Activate();
+            }
+            else
+            {
+                _mainWindow.Activate();
+            }
 
             return this;
         }

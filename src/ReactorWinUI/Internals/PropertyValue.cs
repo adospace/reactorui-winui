@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace ReactorWinUI.Internals
 {

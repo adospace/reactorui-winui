@@ -33,10 +33,28 @@ namespace ReactorWinUI.Internals
             var assemblyPath = _assemblyFileName;
             var assemblyPdbPath = Path.Combine(Path.GetDirectoryName(assemblyPath), Path.GetFileNameWithoutExtension(assemblyPath) + ".pdb");
 
-            var assembly = File.Exists(assemblyPdbPath) ?
-                Assembly.Load(File.ReadAllBytes(assemblyPath))
-                :
-                Assembly.Load(File.ReadAllBytes(assemblyPath), File.ReadAllBytes(assemblyPdbPath));
+            Assembly assembly = null;
+            int retries = 5;
+            while (retries > 0)
+            {
+                retries--;
+
+                try
+                {
+                    assembly = File.Exists(assemblyPdbPath) ?
+                         Assembly.Load(File.ReadAllBytes(assemblyPath))
+                         :
+                         Assembly.Load(File.ReadAllBytes(assemblyPath), File.ReadAllBytes(assemblyPdbPath));
+                    break;
+                }
+                catch (System.IO.IOException)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+
+            if (assembly == null)
+                return null;
 
             var type = assembly.GetType(componentTypeFullName);
 

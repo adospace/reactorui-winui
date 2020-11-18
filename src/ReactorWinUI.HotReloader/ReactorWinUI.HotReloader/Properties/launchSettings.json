@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ReactorWinUI.HotReloader": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\adosp\\source\\repos\\tests\\ReactorWinUI\\ReactorWinUI.DemoApp\\bin\\Debug\\net5.0-windows10.0.18362.0\\ReactorWinUI.DemoApp.dll"
+    }
+  }
+}

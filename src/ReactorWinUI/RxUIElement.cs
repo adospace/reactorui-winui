@@ -5,15 +5,18 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Windows.Foundation;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Media.Media3D;
+
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Media3D;
+
 using Windows.UI.Text;
+using Windows.Foundation;
 
 using ReactorWinUI.Internals;
 
@@ -37,6 +40,7 @@ namespace ReactorWinUI
         PropertyValue<bool> IsHitTestVisible { get; set; }
         PropertyValue<bool> IsHoldingEnabled { get; set; }
         PropertyValue<bool> IsRightTapEnabled { get; set; }
+        PropertyValue<bool> IsTabStop { get; set; }
         PropertyValue<bool> IsTapEnabled { get; set; }
         PropertyValue<KeyboardAcceleratorPlacementMode> KeyboardAcceleratorPlacementMode { get; set; }
         PropertyValue<DependencyObject> KeyboardAcceleratorPlacementTarget { get; set; }
@@ -51,14 +55,20 @@ namespace ReactorWinUI
         PropertyValue<Point> RenderTransformOrigin { get; set; }
         PropertyValue<Shadow> Shadow { get; set; }
         PropertyValue<KeyboardNavigationMode> TabFocusNavigation { get; set; }
+        PropertyValue<int> TabIndex { get; set; }
         PropertyValue<Transform3D> Transform3D { get; set; }
         PropertyValue<TransitionCollection> Transitions { get; set; }
         PropertyValue<bool> UseLayoutRounding { get; set; }
+        PropertyValue<bool> UseSystemFocusVisuals { get; set; }
         PropertyValue<Visibility> Visibility { get; set; }
+        PropertyValue<DependencyObject> XYFocusDown { get; set; }
         PropertyValue<XYFocusNavigationStrategy> XYFocusDownNavigationStrategy { get; set; }
         PropertyValue<XYFocusKeyboardNavigationMode> XYFocusKeyboardNavigation { get; set; }
+        PropertyValue<DependencyObject> XYFocusLeft { get; set; }
         PropertyValue<XYFocusNavigationStrategy> XYFocusLeftNavigationStrategy { get; set; }
+        PropertyValue<DependencyObject> XYFocusRight { get; set; }
         PropertyValue<XYFocusNavigationStrategy> XYFocusRightNavigationStrategy { get; set; }
+        PropertyValue<DependencyObject> XYFocusUp { get; set; }
         PropertyValue<XYFocusNavigationStrategy> XYFocusUpNavigationStrategy { get; set; }
 
         Action GotFocusAction { get; set; }
@@ -95,6 +105,7 @@ namespace ReactorWinUI
         PropertyValue<bool> IRxUIElement.IsHitTestVisible { get; set; }
         PropertyValue<bool> IRxUIElement.IsHoldingEnabled { get; set; }
         PropertyValue<bool> IRxUIElement.IsRightTapEnabled { get; set; }
+        PropertyValue<bool> IRxUIElement.IsTabStop { get; set; }
         PropertyValue<bool> IRxUIElement.IsTapEnabled { get; set; }
         PropertyValue<KeyboardAcceleratorPlacementMode> IRxUIElement.KeyboardAcceleratorPlacementMode { get; set; }
         PropertyValue<DependencyObject> IRxUIElement.KeyboardAcceleratorPlacementTarget { get; set; }
@@ -109,14 +120,20 @@ namespace ReactorWinUI
         PropertyValue<Point> IRxUIElement.RenderTransformOrigin { get; set; }
         PropertyValue<Shadow> IRxUIElement.Shadow { get; set; }
         PropertyValue<KeyboardNavigationMode> IRxUIElement.TabFocusNavigation { get; set; }
+        PropertyValue<int> IRxUIElement.TabIndex { get; set; }
         PropertyValue<Transform3D> IRxUIElement.Transform3D { get; set; }
         PropertyValue<TransitionCollection> IRxUIElement.Transitions { get; set; }
         PropertyValue<bool> IRxUIElement.UseLayoutRounding { get; set; }
+        PropertyValue<bool> IRxUIElement.UseSystemFocusVisuals { get; set; }
         PropertyValue<Visibility> IRxUIElement.Visibility { get; set; }
+        PropertyValue<DependencyObject> IRxUIElement.XYFocusDown { get; set; }
         PropertyValue<XYFocusNavigationStrategy> IRxUIElement.XYFocusDownNavigationStrategy { get; set; }
         PropertyValue<XYFocusKeyboardNavigationMode> IRxUIElement.XYFocusKeyboardNavigation { get; set; }
+        PropertyValue<DependencyObject> IRxUIElement.XYFocusLeft { get; set; }
         PropertyValue<XYFocusNavigationStrategy> IRxUIElement.XYFocusLeftNavigationStrategy { get; set; }
+        PropertyValue<DependencyObject> IRxUIElement.XYFocusRight { get; set; }
         PropertyValue<XYFocusNavigationStrategy> IRxUIElement.XYFocusRightNavigationStrategy { get; set; }
+        PropertyValue<DependencyObject> IRxUIElement.XYFocusUp { get; set; }
         PropertyValue<XYFocusNavigationStrategy> IRxUIElement.XYFocusUpNavigationStrategy { get; set; }
 
         Action IRxUIElement.GotFocusAction { get; set; }
@@ -145,6 +162,7 @@ namespace ReactorWinUI
             NativeControl.Set(this, UIElement.IsHitTestVisibleProperty, thisAsIRxUIElement.IsHitTestVisible);
             NativeControl.Set(this, UIElement.IsHoldingEnabledProperty, thisAsIRxUIElement.IsHoldingEnabled);
             NativeControl.Set(this, UIElement.IsRightTapEnabledProperty, thisAsIRxUIElement.IsRightTapEnabled);
+            NativeControl.Set(this, UIElement.IsTabStopProperty, thisAsIRxUIElement.IsTabStop);
             NativeControl.Set(this, UIElement.IsTapEnabledProperty, thisAsIRxUIElement.IsTapEnabled);
             NativeControl.Set(this, UIElement.KeyboardAcceleratorPlacementModeProperty, thisAsIRxUIElement.KeyboardAcceleratorPlacementMode);
             NativeControl.Set(this, UIElement.KeyboardAcceleratorPlacementTargetProperty, thisAsIRxUIElement.KeyboardAcceleratorPlacementTarget);
@@ -159,14 +177,20 @@ namespace ReactorWinUI
             NativeControl.Set(this, UIElement.RenderTransformOriginProperty, thisAsIRxUIElement.RenderTransformOrigin);
             NativeControl.Set(this, UIElement.ShadowProperty, thisAsIRxUIElement.Shadow);
             NativeControl.Set(this, UIElement.TabFocusNavigationProperty, thisAsIRxUIElement.TabFocusNavigation);
+            NativeControl.Set(this, UIElement.TabIndexProperty, thisAsIRxUIElement.TabIndex);
             NativeControl.Set(this, UIElement.Transform3DProperty, thisAsIRxUIElement.Transform3D);
             NativeControl.Set(this, UIElement.TransitionsProperty, thisAsIRxUIElement.Transitions);
             NativeControl.Set(this, UIElement.UseLayoutRoundingProperty, thisAsIRxUIElement.UseLayoutRounding);
+            NativeControl.Set(this, UIElement.UseSystemFocusVisualsProperty, thisAsIRxUIElement.UseSystemFocusVisuals);
             NativeControl.Set(this, UIElement.VisibilityProperty, thisAsIRxUIElement.Visibility);
+            NativeControl.Set(this, UIElement.XYFocusDownProperty, thisAsIRxUIElement.XYFocusDown);
             NativeControl.Set(this, UIElement.XYFocusDownNavigationStrategyProperty, thisAsIRxUIElement.XYFocusDownNavigationStrategy);
             NativeControl.Set(this, UIElement.XYFocusKeyboardNavigationProperty, thisAsIRxUIElement.XYFocusKeyboardNavigation);
+            NativeControl.Set(this, UIElement.XYFocusLeftProperty, thisAsIRxUIElement.XYFocusLeft);
             NativeControl.Set(this, UIElement.XYFocusLeftNavigationStrategyProperty, thisAsIRxUIElement.XYFocusLeftNavigationStrategy);
+            NativeControl.Set(this, UIElement.XYFocusRightProperty, thisAsIRxUIElement.XYFocusRight);
             NativeControl.Set(this, UIElement.XYFocusRightNavigationStrategyProperty, thisAsIRxUIElement.XYFocusRightNavigationStrategy);
+            NativeControl.Set(this, UIElement.XYFocusUpProperty, thisAsIRxUIElement.XYFocusUp);
             NativeControl.Set(this, UIElement.XYFocusUpNavigationStrategyProperty, thisAsIRxUIElement.XYFocusUpNavigationStrategy);
 
             base.OnUpdate();
@@ -299,6 +323,11 @@ namespace ReactorWinUI
             uielement.IsRightTapEnabled = new PropertyValue<bool>(isRightTapEnabled);
             return uielement;
         }
+        public static T IsTabStop<T>(this T uielement, bool isTabStop) where T : IRxUIElement
+        {
+            uielement.IsTabStop = new PropertyValue<bool>(isTabStop);
+            return uielement;
+        }
         public static T IsTapEnabled<T>(this T uielement, bool isTapEnabled) where T : IRxUIElement
         {
             uielement.IsTapEnabled = new PropertyValue<bool>(isTapEnabled);
@@ -369,6 +398,11 @@ namespace ReactorWinUI
             uielement.TabFocusNavigation = new PropertyValue<KeyboardNavigationMode>(tabFocusNavigation);
             return uielement;
         }
+        public static T TabIndex<T>(this T uielement, int tabIndex) where T : IRxUIElement
+        {
+            uielement.TabIndex = new PropertyValue<int>(tabIndex);
+            return uielement;
+        }
         public static T Transform3D<T>(this T uielement, Transform3D transform3D) where T : IRxUIElement
         {
             uielement.Transform3D = new PropertyValue<Transform3D>(transform3D);
@@ -384,9 +418,19 @@ namespace ReactorWinUI
             uielement.UseLayoutRounding = new PropertyValue<bool>(useLayoutRounding);
             return uielement;
         }
+        public static T UseSystemFocusVisuals<T>(this T uielement, bool useSystemFocusVisuals) where T : IRxUIElement
+        {
+            uielement.UseSystemFocusVisuals = new PropertyValue<bool>(useSystemFocusVisuals);
+            return uielement;
+        }
         public static T Visibility<T>(this T uielement, Visibility visibility) where T : IRxUIElement
         {
             uielement.Visibility = new PropertyValue<Visibility>(visibility);
+            return uielement;
+        }
+        public static T XYFocusDown<T>(this T uielement, DependencyObject xYFocusDown) where T : IRxUIElement
+        {
+            uielement.XYFocusDown = new PropertyValue<DependencyObject>(xYFocusDown);
             return uielement;
         }
         public static T XYFocusDownNavigationStrategy<T>(this T uielement, XYFocusNavigationStrategy xYFocusDownNavigationStrategy) where T : IRxUIElement
@@ -399,14 +443,29 @@ namespace ReactorWinUI
             uielement.XYFocusKeyboardNavigation = new PropertyValue<XYFocusKeyboardNavigationMode>(xYFocusKeyboardNavigation);
             return uielement;
         }
+        public static T XYFocusLeft<T>(this T uielement, DependencyObject xYFocusLeft) where T : IRxUIElement
+        {
+            uielement.XYFocusLeft = new PropertyValue<DependencyObject>(xYFocusLeft);
+            return uielement;
+        }
         public static T XYFocusLeftNavigationStrategy<T>(this T uielement, XYFocusNavigationStrategy xYFocusLeftNavigationStrategy) where T : IRxUIElement
         {
             uielement.XYFocusLeftNavigationStrategy = new PropertyValue<XYFocusNavigationStrategy>(xYFocusLeftNavigationStrategy);
             return uielement;
         }
+        public static T XYFocusRight<T>(this T uielement, DependencyObject xYFocusRight) where T : IRxUIElement
+        {
+            uielement.XYFocusRight = new PropertyValue<DependencyObject>(xYFocusRight);
+            return uielement;
+        }
         public static T XYFocusRightNavigationStrategy<T>(this T uielement, XYFocusNavigationStrategy xYFocusRightNavigationStrategy) where T : IRxUIElement
         {
             uielement.XYFocusRightNavigationStrategy = new PropertyValue<XYFocusNavigationStrategy>(xYFocusRightNavigationStrategy);
+            return uielement;
+        }
+        public static T XYFocusUp<T>(this T uielement, DependencyObject xYFocusUp) where T : IRxUIElement
+        {
+            uielement.XYFocusUp = new PropertyValue<DependencyObject>(xYFocusUp);
             return uielement;
         }
         public static T XYFocusUpNavigationStrategy<T>(this T uielement, XYFocusNavigationStrategy xYFocusUpNavigationStrategy) where T : IRxUIElement

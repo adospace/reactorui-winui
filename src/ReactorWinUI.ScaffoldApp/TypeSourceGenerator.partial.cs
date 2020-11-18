@@ -8,8 +8,8 @@ using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace ReactorWinUI.ScaffoldApp
 {
@@ -34,6 +34,7 @@ namespace ReactorWinUI.ScaffoldApp
                 //.Where(_ => !(_typeToScaffold == typeof(UserControl) && _.Name == "Content"))
 
                 .Where(_ => _.PropertyType != typeof(ICommand))
+                .Where(_ => _.PropertyType != typeof(Microsoft.UI.Xaml.Input.ICommand))
                 .Where(_ => _.Name.IndexOf("CommandParameter") == -1)
 
                 .Distinct(new PropertyInfoEqualityComparer())

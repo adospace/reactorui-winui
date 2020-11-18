@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using ReactorWinUI.Internals;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace ReactorWinUI
 {

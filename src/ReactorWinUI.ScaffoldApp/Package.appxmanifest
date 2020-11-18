@@ -4,15 +4,14 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap mp rescap">
+  IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="88c33a30-86d5-432b-8a03-e54b9c82ddba"
+    Name="c5ca178f-cf0a-48ca-93fa-6d03887b6468"
     Publisher="CN=adosp"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="88c33a30-86d5-432b-8a03-e54b9c82ddba" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="c5ca178f-cf0a-48ca-93fa-6d03887b6468" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>ReactorWinUI.ScaffoldApp</DisplayName>
@@ -21,7 +20,7 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17134.0" MaxVersionTested="10.0.17134.0" />
   </Dependencies>
 
   <Resources>
@@ -46,6 +45,5 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
-    <rescap:Capability Name="broadFileSystemAccess"/>
   </Capabilities>
 </Package>
