@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace ReactorWinUI.DemoApp
 {
-    [EntryComponent]
     public class MainComponent : RxComponent
     {
         public override VisualNode Render()

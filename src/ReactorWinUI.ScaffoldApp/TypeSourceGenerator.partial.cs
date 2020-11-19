@@ -31,7 +31,7 @@ namespace ReactorWinUI.ScaffoldApp
                 .Where(_ => !typeof(DataTemplateSelector).IsAssignableFrom(_.PropertyType))
 
                 //.Where(_ => !(_typeToScaffold == typeof(ContentControl) && _.Name == "Content"))
-                //.Where(_ => !(_typeToScaffold == typeof(UserControl) && _.Name == "Content"))
+                .Where(_ => !(_typeToScaffold == typeof(ItemsControl) && (_.Name == "ItemsSource" || _.Name == "ItemTemplate")))
 
                 .Where(_ => _.PropertyType != typeof(ICommand))
                 .Where(_ => _.PropertyType != typeof(Microsoft.UI.Xaml.Input.ICommand))

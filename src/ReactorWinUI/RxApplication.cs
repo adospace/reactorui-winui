@@ -160,6 +160,32 @@ namespace ReactorWinUI
                 throw new ArgumentNullException(nameof(action));
             }
 
+            if (_mainWindow != null)
+            {
+                if (_mainWindow.Dispatcher != null && !_mainWindow.Dispatcher.HasThreadAccess)
+                {
+                    _mainWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action)).AsTask().Wait();
+                }
+                else
+                {
+                    action();
+                    return;
+                }
+            }
+
+            if (Window.Current != null)
+            {
+                if (!Window.Current.Dispatcher.HasThreadAccess)
+                {
+                    Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action)).AsTask().Wait();
+                }
+                else
+                {
+                    action();
+                    return;
+                }
+            }
+
             if (_rootElement == null)
             {
                 throw new InvalidOperationException();

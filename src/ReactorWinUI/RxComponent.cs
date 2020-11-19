@@ -249,10 +249,7 @@ namespace ReactorWinUI
                 return;
             }
 
-            if (!Window.Current.Dispatcher.HasThreadAccess)
-                Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, Invalidate);
-            else
-                Invalidate();
+            RxApplication.Instance.SafeInvoke(Invalidate);
         }
 
         internal override void MergeWith(VisualNode newNode)
