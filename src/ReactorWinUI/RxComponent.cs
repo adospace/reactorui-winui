@@ -184,9 +184,11 @@ namespace ReactorWinUI
 
         PropertyInfo[] StateProperties { get; }
 
-        void ForwardState(object stateFromOldComponent);
+        void ForwardState(object stateFromOldComponent, bool invalidateComponent);
 
         IRxComponentWithState NewComponent { get; }
+
+        void RegisterOnStateChanged(Action action);
     }
 
     internal interface IRxComponentWithProps
@@ -219,6 +221,7 @@ namespace ReactorWinUI
     public abstract class RxComponent<S, P> : RxComponentWithProps<P>, IRxComponentWithState where S : class, IState, new() where P : class, IProps, new()
     {
         private IRxComponentWithState _newComponent;
+        private List<Action> _actionsRegisterdOnStateChange = new();
         
         protected RxComponent(S state = null, P props = null)
             : base(props)
@@ -228,35 +231,40 @@ namespace ReactorWinUI
 
         public S State { get; private set; }
 
-        public PropertyInfo[] StateProperties => typeof(S).GetProperties().Where(_ => _.CanWrite).ToArray();
-
         object IRxComponentWithState.State => State;
 
-        void IRxComponentWithState.ForwardState(object stateFromOldComponent)
+        void IRxComponentWithState.ForwardState(object stateFromOldComponent, bool invalidateComponent)
         {
-            stateFromOldComponent.CopyPropertiesTo(State, StateProperties);
+            stateFromOldComponent.CopyPropertiesTo(State, ((IRxComponentWithState)this).StateProperties);
 
-            RxApplication.Instance.SafeInvoke(Invalidate);
+            _actionsRegisterdOnStateChange.ForEach(_ => _());
+
+            if (invalidateComponent)
+            {
+                RxApplication.Instance.SafeInvoke(Invalidate);
+            }
         }
 
         IRxComponentWithState IRxComponentWithState.NewComponent => _newComponent;
 
-        private bool TryForworadStateToNewComponent()
+        PropertyInfo[] IRxComponentWithState.StateProperties => typeof(S).GetProperties().Where(_ => _.CanWrite).ToArray();
+
+        private bool TryForworadStateToNewComponent(bool invalidateComponent)
         {
             var newComponent = _newComponent;
-            while (newComponent != null && _newComponent.NewComponent != null)
-                newComponent = _newComponent.NewComponent;
+            while (newComponent != null && newComponent.NewComponent != null)
+                newComponent = newComponent.NewComponent;
 
-            if (_newComponent != null)
+            if (newComponent != null)
             {
-                _newComponent.ForwardState(State);
+                newComponent.ForwardState(State, invalidateComponent);
                 return true;
             }
 
             return false;
         }
 
-        protected virtual void SetState(Action<S> action)
+        protected virtual void SetState(Action<S> action, bool invalidateComponent = false)
         {
             if (action is null)
             {
@@ -265,10 +273,15 @@ namespace ReactorWinUI
 
             action(State);
 
-            if (TryForworadStateToNewComponent())
+            if (TryForworadStateToNewComponent(invalidateComponent))
                 return;
 
-            RxApplication.Instance.SafeInvoke(Invalidate);
+            _actionsRegisterdOnStateChange.ForEach(_ => _());
+
+            if (invalidateComponent)
+            {
+                RxApplication.Instance.SafeInvoke(Invalidate);
+            }
         }
 
         internal override void MergeWith(VisualNode newNode)
@@ -286,6 +299,16 @@ namespace ReactorWinUI
             }
 
             base.MergeWith(newNode);
+        }
+
+        void IRxComponentWithState.RegisterOnStateChanged(Action action)
+        {
+            if (action is null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            _actionsRegisterdOnStateChange.Add(action);
         }
     }
 

@@ -296,7 +296,7 @@ namespace ReactorWinUI
             }
         }
 
-        protected T GetParent<T>() where T : VisualNode
+        internal T GetParentAs<T>() where T : VisualNode
         {
             var parent = Parent;
             while (parent != null && !(parent is T))
