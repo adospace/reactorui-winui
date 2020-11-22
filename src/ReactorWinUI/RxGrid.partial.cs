@@ -172,25 +172,25 @@ namespace ReactorWinUI
             return grid;
         }
 
-        public static T GridRow<T>(this T element, int rowIndex) where T : VisualNode
+        public static T GridRow<T>(this T element, int rowIndex) where T : VisualNodeWithAttachedProperties
         {
             element.SetAttachedProperty(Grid.RowProperty, rowIndex);
             return element;            
         }
 
-        public static T GridRowSpan<T>(this T element, int rowSpan) where T : VisualNode
+        public static T GridRowSpan<T>(this T element, int rowSpan) where T : VisualNodeWithAttachedProperties
         {
             element.SetAttachedProperty(Grid.RowSpanProperty, rowSpan);
             return element;
         }
 
-        public static T GridColumn<T>(this T element, int columnIndex) where T : VisualNode
+        public static T GridColumn<T>(this T element, int columnIndex) where T : VisualNodeWithAttachedProperties
         {
             element.SetAttachedProperty(Grid.ColumnProperty, columnIndex);
             return element;
         }
 
-        public static T GridColumnSpan<T>(this T element, int columnSpan) where T : VisualNode
+        public static T GridColumnSpan<T>(this T element, int columnSpan) where T : VisualNodeWithAttachedProperties
         {
             element.SetAttachedProperty(Grid.ColumnSpanProperty, columnSpan);
             return element;

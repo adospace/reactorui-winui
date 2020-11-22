@@ -15,19 +15,27 @@ namespace ReactorWinUI.Internals
 
     public class PropertyValue<T> : IPropertyValue
     {
+        private PropertyValue()
+        {
+            SetDefault = true;
+        }
         public PropertyValue(T value)
         {
             Value = value;
         }
 
-        private PropertyValue()
+        public PropertyValue(Func<T> valueAction)
         {
-            SetDefault = true;
+            ValueAction = valueAction ?? throw new ArgumentNullException(nameof(valueAction));
+
+            Value = valueAction();
         }
 
         public static IPropertyValue Default { get; } = new PropertyValue<T>();
 
         public T Value { get; }
+
+        public Func<T> ValueAction { get; }
 
         public bool SetDefault { get; }
 
@@ -47,6 +55,7 @@ namespace ReactorWinUI.Internals
             {
                 visualNode.SetDefaultPropertyValue(property, dependencyObject.GetValue(property));
                 dependencyObject.SetValue(property, propertyValue.GetValue());
+
             }
             else
             {

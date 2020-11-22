@@ -82,12 +82,7 @@ namespace ReactorWinUI
 
         public int ChildIndex { get; private set; }
         public object Key { get; set; }
-        protected readonly Dictionary<DependencyProperty, object> _attachedProperties = new Dictionary<DependencyProperty, object>();
-  
-        public void SetAttachedProperty(DependencyProperty property, object value)
-            => _attachedProperties[property] = value;
 
-        //internal event EventHandler LayoutCycleRequest;
         internal IReadOnlyList<VisualNode> Children
         {
             get
@@ -425,6 +420,11 @@ namespace ReactorWinUI
             => new TChild();
     }
 
+    public abstract class VisualNodeWithAttachedProperties : VisualNode
+    {
+        public abstract void SetAttachedProperty(DependencyProperty property, object value);
+    }
+
     internal interface IVisualNodeWithNativeControl
     {
         TResult GetNativeControl<TResult>() where TResult : DependencyObject;
@@ -434,16 +434,14 @@ namespace ReactorWinUI
         bool SetDefaultPropertyValue(DependencyProperty dependencyProperty, object value);
     }
 
-    // public interface IVisualNodeWithAttachedProperties
-    // {
-    //     void SetAttachedProperty(DependencyProperty property, object value);
-    // }
 
-    public abstract class VisualNode<T> : VisualNode, IVisualNodeWithNativeControl where T : DependencyObject, new()
+    public abstract class VisualNode<T> : VisualNodeWithAttachedProperties, IVisualNodeWithNativeControl where T : DependencyObject, new()
     {
         protected DependencyObject _nativeControl;
 
         private Dictionary<DependencyProperty, object> _defaultPropertyValueBag = new Dictionary<DependencyProperty, object>();
+
+        private readonly Dictionary<DependencyProperty, object> _attachedProperties = new();
 
         public bool SetDefaultPropertyValue(DependencyProperty dependencyProperty, object value)
         {
@@ -501,9 +499,6 @@ namespace ReactorWinUI
         {
             if (NativeControl != null)
             {
-                //NativeControl.PropertyChanged -= NativeControl_PropertyChanged;
-                //NativeControl.PropertyChanging -= NativeControl_PropertyChanging;
-
                 foreach (var attachedProperty in _attachedProperties)
                 {
                     NativeControl.ClearValue(attachedProperty.Key);
@@ -528,9 +523,6 @@ namespace ReactorWinUI
         {
             if (_nativeControl != null)
             {
-                //_nativeControl.PropertyChanged -= NativeControl_PropertyChanged;
-                //_nativeControl.PropertyChanging -= NativeControl_PropertyChanging;
-
                 Parent?.RemoveChild(this, _nativeControl);
 
                 _nativeControl = null;
@@ -547,29 +539,18 @@ namespace ReactorWinUI
                 NativeControl.SetValue(attachedProperty.Key, attachedProperty.Value);
             }
 
-            //if (PropertyChangedAction != null)
-            //    NativeControl.PropertyChanged += NativeControl_PropertyChanged;
-            //if (PropertyChangingAction != null)
-            //    NativeControl.PropertyChanging += NativeControl_PropertyChanging;
-
             base.OnUpdate();
         }
-
-        //private void NativeControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        //{
-        //    PropertyChangedAction?.Invoke(sender, e);
-        //}
-
-        //private void NativeControl_PropertyChanging(object sender, Xamarin.Forms.PropertyChangingEventArgs e)
-        //{
-        //    PropertyChangingAction?.Invoke(sender, new System.ComponentModel.PropertyChangingEventArgs(e.PropertyName));
-        //}
 
         TResult IVisualNodeWithNativeControl.GetNativeControl<TResult>()
         {
             return (_nativeControl as TResult) ??
                 throw new InvalidOperationException($"Unable to convert from type {typeof(T)} to type {typeof(TResult)} when getting the native control");
         }
+
+        public override void SetAttachedProperty(DependencyProperty property, object value)
+            => _attachedProperties[property] = value;
+
     }
 
 }

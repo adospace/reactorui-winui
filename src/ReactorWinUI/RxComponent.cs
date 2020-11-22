@@ -14,11 +14,16 @@ namespace ReactorWinUI
         RxContext Context { get; }
     }
 
-    public abstract class RxComponent : VisualNode, IEnumerable<VisualNode>
+    public abstract class RxComponent : VisualNodeWithAttachedProperties, IEnumerable<VisualNode>
     {
+
+        private readonly List<VisualNode> _children = new();
+        private readonly Dictionary<DependencyProperty, object> _attachedProperties = new();
+
         public abstract VisualNode Render();
 
-        private readonly List<VisualNode> _children = new List<VisualNode>();
+        public override void SetAttachedProperty(DependencyProperty property, object value)
+            => _attachedProperties[property] = value;
 
         public IEnumerator<VisualNode> GetEnumerator()
         {
