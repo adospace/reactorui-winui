@@ -20,12 +20,12 @@ namespace ReactorWinUI.DemoApp
         public Item SelectedItem { get; set; }
     }
 
-    [EntryComponent]
     public class ItemsControlComponent : RxComponent<ItemsControlComponentState>
     {
         protected override void OnMounted()
         {
-            SetState(s => s.Items = new[] { new Item("Item1"), new Item("Item2"), new Item("Item3") });
+            State.Items = new[] { new Item("Item1"), new Item("Item2"), new Item("Item3") };
+
             base.OnMounted();
         }
 

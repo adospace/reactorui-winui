@@ -22,18 +22,19 @@ using ReactorWinUI.Internals;
 
 namespace ReactorWinUI
 {
-    public partial interface IRxUserControl : IRxControl
+    public partial interface IRxCanvas : IRxPanel
     {
+
     }
 
-    public partial class RxUserControl<T> : RxControl<T>, IRxUserControl where T : UserControl, new()
+    public partial class RxCanvas<T> : RxPanel<T>, IRxCanvas where T : Canvas, new()
     {
-        public RxUserControl()
+        public RxCanvas()
         {
 
         }
 
-        public RxUserControl(Action<T> componentRefAction)
+        public RxCanvas(Action<T> componentRefAction)
             : base(componentRefAction)
         {
 
@@ -44,7 +45,7 @@ namespace ReactorWinUI
         {
             OnBeginUpdate();
 
-            var thisAsIRxUserControl = (IRxUserControl)this;
+            var thisAsIRxCanvas = (IRxCanvas)this;
 
             base.OnUpdate();
 
@@ -56,7 +57,7 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
-            var thisAsIRxUserControl = (IRxUserControl)this;
+            var thisAsIRxCanvas = (IRxCanvas)this;
 
             base.OnAttachNativeEvents();
         }
@@ -72,20 +73,20 @@ namespace ReactorWinUI
         }
 
     }
-    public partial class RxUserControl : RxUserControl<UserControl>
+    public partial class RxCanvas : RxCanvas<Canvas>
     {
-        public RxUserControl()
+        public RxCanvas()
         {
 
         }
 
-        public RxUserControl(Action<UserControl> componentRefAction)
+        public RxCanvas(Action<Canvas> componentRefAction)
             : base(componentRefAction)
         {
 
         }
     }
-    public static partial class RxUserControlExtensions
+    public static partial class RxCanvasExtensions
     {
     }
 }

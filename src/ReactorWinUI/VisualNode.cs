@@ -12,26 +12,10 @@ namespace ReactorWinUI
     public interface IVisualNode
     {
         void AppendAnimatable<T>(object key, T animation, Action<T> action) where T : RxAnimation;
-
-
-        //Action<object, PropertyChangingEventArgs> PropertyChangingAction { get; set; }
-        //Action<object, PropertyChangedEventArgs> PropertyChangedAction { get; set; }
-
     }
 
     public static class VisualNodeExtensions
     {
-        //public static T OnPropertyChanged<T>(this T element, Action<object, PropertyChangedEventArgs> action) where T : VisualNode
-        //{
-        //    element.PropertyChangedAction = action;
-        //    return element;
-        //}
-
-        //public static T OnPropertyChanging<T>(this T element, Action<object, System.ComponentModel.PropertyChangingEventArgs> action) where T : VisualNode
-        //{
-        //    element.PropertyChangingAction = action;
-        //    return element;
-        //}
 
         public static T When<T>(this T node, bool flag, Action<T> actionToApplyWhenFlagIsTrue) where T : VisualNode
         {
@@ -94,13 +78,10 @@ namespace ReactorWinUI
 
         protected VisualNode()
         {
-            //System.Diagnostics.Debug.WriteLine($"{this}->Created()");
         }
 
         public int ChildIndex { get; private set; }
         public object Key { get; set; }
-        //public Action<object, PropertyChangedEventArgs> PropertyChangedAction { get; set; }
-        //public Action<object, System.ComponentModel.PropertyChangingEventArgs> PropertyChangingAction { get; set; }
         protected readonly Dictionary<DependencyProperty, object> _attachedProperties = new Dictionary<DependencyProperty, object>();
   
         public void SetAttachedProperty(DependencyProperty property, object value)
@@ -230,11 +211,8 @@ namespace ReactorWinUI
             };
         }
 
-        internal virtual void Layout(VisualNode parent = null)
+        internal virtual void Layout()
         {
-            if (parent != null)
-                Parent = parent;
-
             if (!IsLayoutCycleRequired)
                 return;
 

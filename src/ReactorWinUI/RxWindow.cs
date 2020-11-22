@@ -17,7 +17,7 @@ namespace ReactorWinUI
 
     public class RxWindow : VisualNode, IEnumerable<VisualNode>, IRxWindow
     {
-        private readonly List<VisualNode> _contents = new List<VisualNode>();
+        private readonly List<VisualNode> _contents = new();
         private readonly Action<Window> _componentRefAction;
         private Window _nativeControl;
 
@@ -36,6 +36,11 @@ namespace ReactorWinUI
         public RxWindow(VisualNode content)
         {
             _contents.Add(content);
+        }
+
+        public RxWindow(string title)
+        {
+            this.Title(title);
         }
 
         protected override void OnMount()

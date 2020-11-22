@@ -66,6 +66,12 @@ namespace ReactorWinUI
         {
 
         }
+
+        public RxTextBlock(string text)
+        {
+            this.Text(text);
+        }
+
         PropertyValue<int> IRxTextBlock.CharacterSpacing { get; set; }
         PropertyValue<FontFamily> IRxTextBlock.FontFamily { get; set; }
         PropertyValue<double> IRxTextBlock.FontSize { get; set; }

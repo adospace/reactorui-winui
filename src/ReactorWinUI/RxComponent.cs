@@ -52,14 +52,6 @@ namespace ReactorWinUI
             return current as IRxHostElement;
         }
 
-        //protected Window ContainerWindow
-        //{
-        //    get
-        //    {
-        //        return GetPageHost()?.ContainerWindow;
-        //    }
-        //}
-
         protected sealed override void OnAddChild(VisualNode widget, object nativeControl)
         {
             if (nativeControl is DependencyObject childAsDependencyObject)
@@ -188,6 +180,8 @@ namespace ReactorWinUI
         PropertyInfo[] StateProperties { get; }
 
         void ForwardState(object stateFromOldComponent);
+
+        IRxComponentWithState NewComponent { get; }
     }
 
     internal interface IRxComponentWithProps
@@ -240,6 +234,23 @@ namespace ReactorWinUI
             RxApplication.Instance.SafeInvoke(Invalidate);
         }
 
+        IRxComponentWithState IRxComponentWithState.NewComponent => _newComponent;
+
+        private bool TryForworadStateToNewComponent()
+        {
+            var newComponent = _newComponent;
+            while (newComponent != null && _newComponent.NewComponent != null)
+                newComponent = _newComponent.NewComponent;
+
+            if (_newComponent != null)
+            {
+                _newComponent.ForwardState(State);
+                return true;
+            }
+
+            return false;
+        }
+
         protected virtual void SetState(Action<S> action)
         {
             if (action is null)
@@ -249,11 +260,8 @@ namespace ReactorWinUI
 
             action(State);
 
-            if (_newComponent != null)
-            {
-                _newComponent.ForwardState(State);
+            if (TryForworadStateToNewComponent())
                 return;
-            }
 
             RxApplication.Instance.SafeInvoke(Invalidate);
         }

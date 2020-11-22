@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ReactorWinUI
 {
-    public class RxContext : Dictionary<string, object>
+    public sealed class RxContext : Dictionary<string, object>
     {
         public RxContext()
         { }
