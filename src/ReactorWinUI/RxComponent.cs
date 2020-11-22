@@ -52,32 +52,38 @@ namespace ReactorWinUI
             return current as IRxHostElement;
         }
 
-        protected Window ContainerWindow
-        {
-            get
-            {
-                return GetPageHost()?.ContainerWindow;
-            }
-        }
+        //protected Window ContainerWindow
+        //{
+        //    get
+        //    {
+        //        return GetPageHost()?.ContainerWindow;
+        //    }
+        //}
 
-        protected sealed override void OnAddChild(VisualNode widget, DependencyObject nativeControl)
+        protected sealed override void OnAddChild(VisualNode widget, object nativeControl)
         {
-            foreach (var attachedProperty in _attachedProperties)
+            if (nativeControl is DependencyObject childAsDependencyObject)
             {
-                nativeControl.SetValue(attachedProperty.Key, attachedProperty.Value);
+                foreach (var attachedProperty in _attachedProperties)
+                {
+                    childAsDependencyObject.SetValue(attachedProperty.Key, attachedProperty.Value);
+                }
             }
 
             Parent.AddChild(this, nativeControl);
         }
 
-        protected sealed override void OnRemoveChild(VisualNode widget, DependencyObject nativeControl)
+        protected sealed override void OnRemoveChild(VisualNode widget, object nativeControl)
         {
             Parent.RemoveChild(this, nativeControl);
-            
-            foreach (var attachedProperty in _attachedProperties)
+
+            if (nativeControl is DependencyObject childAsDependencyObject)
             {
-                nativeControl.ClearValue(attachedProperty.Key);
-            }           
+                foreach (var attachedProperty in _attachedProperties)
+                {
+                    childAsDependencyObject.ClearValue(attachedProperty.Key);
+                }
+            }
         }
 
         protected override TChild OnCreatChild<TChild>() 

@@ -9,7 +9,7 @@
   <Identity
     Name="de6a73e2-76af-4f6b-a77e-75682f7039fc"
     Publisher="CN=adosp"
-    Version="1.0.0.0" />
+    Version="1.0.2.0" />
 
   <Properties>
     <DisplayName>ReactorWinUI.HotReloader (Package)</DisplayName>

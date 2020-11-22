@@ -5,11 +5,13 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
+using Microsoft.Web.WebView2.Core;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -26,16 +28,20 @@ namespace ReactorWinUI.HotReloader
     /// </summary>
     public partial class App : Application
     {
+        private IRxHostElement _rxApp;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-
-
         }
 
         /// <summary>
@@ -45,11 +51,39 @@ namespace ReactorWinUI.HotReloader
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            var assemblyPath = @"C:\Users\adosp\source\repos\reactorui-winui\src\ReactorWinUI.DemoApp\bin\Debug\net5.0-windows10.0.18362.0\ReactorWinUI.DemoApp.dll";
+            //Log.Information($"commmand line: {args.Arguments}");
 
-            RxApplication.Create(assemblyPath).Run();
+            //var assemblyPath = args.Arguments;
 
-            //var window = new MainWindow();
+            //if (string.IsNullOrEmpty(args.Arguments))
+            //{
+            //    var commandLineArgsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "CommandLineArgs.txt");
+            //    if (File.Exists(commandLineArgsPath))
+            //    {
+            //        assemblyPath = File.ReadAllText(commandLineArgsPath);
+            //    }
+            //}
+
+            //if (string.IsNullOrEmpty(assemblyPath))
+            //{
+            //    assemblyPath = @"..\..\..\..\..\..\..\ReactorWinUI.DemoApp\bin\Debug\net5.0-windows10.0.18362.0\ReactorWinUI.DemoApp.dll"; 
+            //    // @"C:\Users\adosp\source\repos\reactorui-winui\src\ReactorWinUI.DemoApp\bin\Debug\net5.0-windows10.0.18362.0\ReactorWinUI.DemoApp.dll";
+            //    //               
+            //}
+
+            var commandLineArgs = Environment.GetCommandLineArgs();
+
+            if (commandLineArgs == null ||
+                commandLineArgs.Length < 2)
+            {
+                throw new InvalidOperationException("Pass the path to the ReactorUI application (dll) in command line");
+            }
+
+            var assemblyPath = commandLineArgs[1];
+
+            _rxApp = RxApplication.Create(assemblyPath).Run();
+
+            //var window = new Window();
             //window.Activate();
 
             //m_window = new MainWindow();
@@ -66,6 +100,7 @@ namespace ReactorWinUI.HotReloader
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             // Save application state and stop any background activity
+            _rxApp.Stop();
         }
 
         //private Window m_window;

@@ -48,26 +48,26 @@ namespace ReactorWinUI
             return _contents.GetEnumerator();
         }
         
-        protected override void OnAddChild(VisualNode widget, DependencyObject childControl)
+        protected override void OnAddChild(VisualNode widget, object childControl)
         {
             OnAddChildCore(widget, childControl);
 
             base.OnAddChild(widget, childControl);
         }
 
-        protected virtual void OnAddChildCore(VisualNode widget, DependencyObject childControl)
+        protected virtual void OnAddChildCore(VisualNode widget, object childControl)
         {
             NativeControl.Content = childControl;
         }
 
-        protected override void OnRemoveChild(VisualNode widget, DependencyObject childControl)
+        protected override void OnRemoveChild(VisualNode widget, object childControl)
         {
             OnRemoveChildCore(widget, childControl);
 
             base.OnRemoveChild(widget, childControl);
         }
 
-        protected virtual void OnRemoveChildCore(VisualNode widget, DependencyObject childControl)
+        protected virtual void OnRemoveChildCore(VisualNode widget, object childControl)
         {
             NativeControl.Content = null;
         }

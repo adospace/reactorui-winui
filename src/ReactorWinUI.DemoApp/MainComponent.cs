@@ -10,15 +10,18 @@ namespace ReactorWinUI.DemoApp
     {
         public override VisualNode Render()
         {
-            return new RxStackPanel()
+            return new RxWindow()
             {
-                new RxTextBlock()
-                    .Text("Hello"),
-                new RxTextBlock()
-                    .Text("World")
-            }
-            .VCenter()
-            .HCenter();
+                new RxStackPanel()
+                {
+                    new RxTextBlock()
+                        .Text("Hello"),
+                    new RxTextBlock()
+                        .Text("World")
+                }
+                .VCenter()
+                .HCenter()
+            };
         }
     }
 }

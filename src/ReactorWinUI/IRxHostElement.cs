@@ -10,6 +10,6 @@ namespace ReactorWinUI
 
         void Stop();
 
-        Window ContainerWindow { get; }
+        //Window ContainerWindow { get; }
     }
 }

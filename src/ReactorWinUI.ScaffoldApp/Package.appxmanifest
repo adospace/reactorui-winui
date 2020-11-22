@@ -9,7 +9,7 @@
   <Identity
     Name="c5ca178f-cf0a-48ca-93fa-6d03887b6468"
     Publisher="CN=adosp"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="c5ca178f-cf0a-48ca-93fa-6d03887b6468" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

@@ -181,7 +181,7 @@ namespace ReactorWinUI
             _metadata[typeof(T).FullName] = value;
         }
 
-        internal void AddChild(VisualNode widget, DependencyObject childNativeControl)
+        internal void AddChild(VisualNode widget, object childNativeControl)
         {
             OnAddChild(widget, childNativeControl);
         }
@@ -301,7 +301,7 @@ namespace ReactorWinUI
             Parent = null;
         }
 
-        internal void RemoveChild(VisualNode widget, DependencyObject childNativeControl)
+        internal void RemoveChild(VisualNode widget, object childNativeControl)
         {
             OnRemoveChild(widget, childNativeControl);
         }
@@ -342,7 +342,7 @@ namespace ReactorWinUI
             //System.Diagnostics.Debug.WriteLine($"{this}->Invalidated()");
         }
 
-        protected virtual void OnAddChild(VisualNode widget, DependencyObject childNativeControl)
+        protected virtual void OnAddChild(VisualNode widget, object childNativeControl)
         {
         }
 
@@ -377,7 +377,7 @@ namespace ReactorWinUI
             _isMounted = true;
         }
 
-        protected virtual void OnRemoveChild(VisualNode widget, DependencyObject childNativeControl)
+        protected virtual void OnRemoveChild(VisualNode widget, object childNativeControl)
         {
         }
 
@@ -539,7 +539,7 @@ namespace ReactorWinUI
 
         protected override void OnMount()
         {
-            _nativeControl = _nativeControl ?? (Parent?.CreateChild<T>() ?? new T());
+            _nativeControl ??= (Parent?.CreateChild<T>() ?? new T());
             Parent?.AddChild(this, _nativeControl);
             _componentRefAction?.Invoke(NativeControl);
 

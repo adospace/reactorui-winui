@@ -7,27 +7,28 @@ using System.Windows;
 
 using ReactorWinUI.Internals;
 using Microsoft.UI.Xaml;
+using Microsoft.System;
 
 namespace ReactorWinUI
 {
-    public interface IRxApplicationHost
-    {
-        void SetRoot(UIElement rootElement);
-    }
+    //public interface IRxApplicationHost
+    //{
+    //    void SetRoot(UIElement rootElement);
+    //}
 
     public class RxApplication : VisualNode, IRxHostElement
     {
         public static RxApplication Instance { get; private set; }
         //private readonly Application _application;
         private readonly Type _rootComponentType;
-        private readonly IRxApplicationHost _applicationHost;
+        //private readonly IRxApplicationHost _applicationHost;
         private RxComponent _rootComponent;
         private bool _sleeping = true;
-        private readonly DispatcherTimer _animationTimer = null;
-        private UIElement _rootElement;
-        private Window _mainWindow;
+        private readonly DispatcherQueueTimer _animationTimer = null;
+        //private UIElement _rootElement;
+        //private Window _mainWindow;
 
-        private RxApplication(Type rootComponentType, IRxApplicationHost applicationHost = null)
+        private RxApplication(Type rootComponentType)
         {
             if (Instance != null)
             {
@@ -38,11 +39,10 @@ namespace ReactorWinUI
 
             //_application = application ?? throw new ArgumentNullException(nameof(application));
             _rootComponentType = rootComponentType;
-            _applicationHost = applicationHost;
-            _animationTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(16)
-            };
+
+            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _animationTimer = dispatcherQueue.CreateTimer();
+            _animationTimer.Interval = TimeSpan.FromMilliseconds(16);
             _animationTimer.Tick += (s, e) =>
             {
                 Animate();
@@ -62,8 +62,8 @@ namespace ReactorWinUI
             System.Diagnostics.Debug.WriteLine(ex);
         }
 
-        public static RxApplication Create<T>(IRxApplicationHost applicationHost = null) where T : RxComponent, new()
-            => new RxApplication(typeof(T), applicationHost);
+        //public static RxApplication Create<T>(IRxApplicationHost applicationHost = null) where T : RxComponent, new()
+        //    => new RxApplication(typeof(T), applicationHost);
 
         //public static RxApplication Create(IRxApplicationHost applicationHost = null)
         //{
@@ -78,7 +78,7 @@ namespace ReactorWinUI
         {
             var assemblyPdbPath = Path.Combine(Path.GetDirectoryName(assemblyPath), Path.GetFileNameWithoutExtension(assemblyPath) + ".pdb");
 
-            var assembly = File.Exists(assemblyPdbPath) ?
+            var assembly = !File.Exists(assemblyPdbPath) ?
                 Assembly.Load(File.ReadAllBytes(assemblyPath))
                 :
                 Assembly.Load(File.ReadAllBytes(assemblyPath), File.ReadAllBytes(assemblyPdbPath));
@@ -115,40 +115,39 @@ namespace ReactorWinUI
 
         public RxContext Context { get; } = new RxContext();
 
-        public Window ContainerWindow
-        {
-            get
-            {
-                return Window.Current;
-            }
-        }
+        //public Window ContainerWindow
+        //{
+        //    get
+        //    {
+        //        return Window.Current;
+        //    }
+        //}
 
-        protected sealed override void OnAddChild(VisualNode widget, DependencyObject nativeControl)
+        protected sealed override void OnAddChild(VisualNode widget, object nativeControl)
         {
-            if (nativeControl is UIElement rootElement)
-            {
-                _rootElement = rootElement;
-                if (_applicationHost != null)
-                {
-                    _applicationHost.SetRoot(rootElement);
-                }
-                else if (_mainWindow != null)
-                {
-                    _mainWindow.Content = rootElement;
-                }
-                else if (Window.Current != null)
-                {
-                    Window.Current.Content = rootElement;
-                }
-                    
-            }
-            else
+            //if (nativeControl is UIElement rootElement)
+            //{
+            //    _rootElement = rootElement;
+            //    if (_applicationHost != null)
+            //    {
+            //        _applicationHost.SetRoot(rootElement);
+            //    }
+            //    else if (_mainWindow != null)
+            //    {
+            //        _mainWindow.Content = rootElement;
+            //    }
+            //    else if (Window.Current != null)
+            //    {
+            //        Window.Current.Content = rootElement;
+            //    }
+            //}
+            if (nativeControl is not Window)
             {
                 throw new NotSupportedException($"Invalid root component ({nativeControl.GetType()}): must be a window (i.e. RxWindow)");
             }
         }
 
-        protected sealed override void OnRemoveChild(VisualNode widget, DependencyObject nativeControl)
+        protected sealed override void OnRemoveChild(VisualNode widget, object nativeControl)
         {
             //_application.MainWindow?.Close();
         }
@@ -160,53 +159,64 @@ namespace ReactorWinUI
                 throw new ArgumentNullException(nameof(action));
             }
 
-            if (_mainWindow != null)
-            {
-                if (_mainWindow.Dispatcher != null && !_mainWindow.Dispatcher.HasThreadAccess)
-                {
-                    _mainWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action)).AsTask().Wait();
-                }
-                else
-                {
-                    action();
-                    return;
-                }
-            }
+            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-            if (Window.Current != null)
+            if (!dispatcherQueue.HasThreadAccess)
             {
-                if (!Window.Current.Dispatcher.HasThreadAccess)
-                {
-                    Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action)).AsTask().Wait();
-                }
-                else
-                {
-                    action();
-                    return;
-                }
-            }
-
-            if (_rootElement == null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            if (!_rootElement.Dispatcher.HasThreadAccess)
-            {
-                _rootElement.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action)).AsTask().Wait();
+                dispatcherQueue.TryEnqueue(new DispatcherQueueHandler(action));
             }
             else
             {
                 action();
             }
+
+            //if (_mainWindow != null)
+            //{
+            //    if (_mainWindow.Dispatcher != null && !_mainWindow.Dispatcher.HasThreadAccess)
+            //    {
+            //        _mainWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action)).AsTask().Wait();
+            //    }
+            //    else
+            //    {
+            //        action();
+            //        return;
+            //    }
+            //}
+
+            //if (Window.Current != null)
+            //{
+            //    if (!Window.Current.Dispatcher.HasThreadAccess)
+            //    {
+            //        Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action)).AsTask().Wait();
+            //    }
+            //    else
+            //    {
+            //        action();
+            //        return;
+            //    }
+            //}
+
+            //if (_rootElement == null)
+            //{
+            //    throw new InvalidOperationException();
+            //}
+
+            //if (!_rootElement.Dispatcher.HasThreadAccess)
+            //{
+            //    _rootElement.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action)).AsTask().Wait();
+            //}
+            //else
+            //{
+            //    action();
+            //}
         }
 
         public IRxHostElement Run()
         {
-            if (Window.Current == null)
-            {
-                _mainWindow = new Window();
-            }
+            //if (Window.Current == null)
+            //{
+            //    _mainWindow = new Window();
+            //}
 
             if (_sleeping)
             {
@@ -234,31 +244,44 @@ namespace ReactorWinUI
                 }
             }
 
-            if (Window.Current != null)
-            {
-                Window.Current.Activate();
-            }
-            else
-            {
-                _mainWindow.Activate();
-            }
+            //if (Window.Current != null)
+            //{
+            //    Window.Current.Activate();
+            //}
+            //else
+            //{
+            //    _mainWindow.Activate();
+            //}
 
             return this;
         }
 
-        private async void OnComponentAssemblyChanged(object sender, EventArgs e)
+        private void OnComponentAssemblyChanged(object sender, EventArgs e)
         {
-            if (_rootElement == null)
-            {
-                throw new InvalidOperationException();
-            }
+            //if (_rootElement == null)
+            //{
+            //    throw new InvalidOperationException();
+            //}
 
-            if (!_rootElement.Dispatcher.HasThreadAccess)
-            {
-                await _rootElement.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => OnComponentAssemblyChanged(sender, e)).AsTask();
-                return;
-            }
+            //if (!_rootElement.Dispatcher.HasThreadAccess)
+            //{
+            //    await _rootElement.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => OnComponentAssemblyChanged(sender, e)).AsTask();
+            //    return;
+            //}
+            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
+            if (!dispatcherQueue.HasThreadAccess)
+            {
+                dispatcherQueue.TryEnqueue(new DispatcherQueueHandler(ReloadRootComponent));
+            }
+            else
+            {
+                ReloadRootComponent();
+            }
+        }
+
+        private void ReloadRootComponent()
+        { 
             try
             {
                 var newComponent = ComponentLoader.Instance.LoadComponent(_rootComponentType.FullName);
@@ -272,7 +295,7 @@ namespace ReactorWinUI
             catch (Exception ex)
             {
                 FireUnhandledExpectionEvent(ex);
-            }
+            }        
         }
 
         public void Stop()
@@ -304,11 +327,11 @@ namespace ReactorWinUI
             try
             {
                 Layout();
-
+                
                 //_animationTimer.IsEnabled = IsAnimationFrameRequested;
-                if (IsAnimationFrameRequested && !_animationTimer.IsEnabled)
+                if (IsAnimationFrameRequested && !_animationTimer.IsRunning)
                     _animationTimer.Start();
-                else if (!IsAnimationFrameRequested && _animationTimer.IsEnabled)
+                else if (!IsAnimationFrameRequested && _animationTimer.IsRunning)
                     _animationTimer.Stop();
             }
             catch (Exception ex)
