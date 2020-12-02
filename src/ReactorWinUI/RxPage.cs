@@ -50,8 +50,8 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxPage = (IRxPage)this;
-            NativeControl.Set(this, Page.BottomAppBarProperty, thisAsIRxPage.BottomAppBar);
-            NativeControl.Set(this, Page.TopAppBarProperty, thisAsIRxPage.TopAppBar);
+            SetPropertyValue(NativeControl, Page.BottomAppBarProperty, thisAsIRxPage.BottomAppBar);
+            SetPropertyValue(NativeControl, Page.TopAppBarProperty, thisAsIRxPage.TopAppBar);
 
             base.OnUpdate();
 
@@ -63,21 +63,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxPage = (IRxPage)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public partial class RxPage : RxPage<Page>
     {
@@ -99,9 +111,19 @@ namespace ReactorWinUI
             page.BottomAppBar = new PropertyValue<AppBar>(bottomAppBar);
             return page;
         }
+        public static T BottomAppBar<T>(this T page, Func<AppBar> bottomAppBarFunc) where T : IRxPage
+        {
+            page.BottomAppBar = new PropertyValue<AppBar>(bottomAppBarFunc);
+            return page;
+        }
         public static T TopAppBar<T>(this T page, AppBar topAppBar) where T : IRxPage
         {
             page.TopAppBar = new PropertyValue<AppBar>(topAppBar);
+            return page;
+        }
+        public static T TopAppBar<T>(this T page, Func<AppBar> topAppBarFunc) where T : IRxPage
+        {
+            page.TopAppBar = new PropertyValue<AppBar>(topAppBarFunc);
             return page;
         }
     }

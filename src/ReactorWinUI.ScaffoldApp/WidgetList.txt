@@ -8,3 +8,12 @@ Microsoft.UI.Xaml.Controls.Frame
 Microsoft.UI.Xaml.Controls.Page
 Microsoft.UI.Xaml.Controls.TextBlock
 Microsoft.UI.Xaml.Controls.UserControl
+Microsoft.UI.Xaml.Controls.Panel
+Microsoft.UI.Xaml.Controls.StackPanel
+Microsoft.UI.Xaml.Controls.Canvas
+Microsoft.UI.Xaml.Controls.Grid
+Microsoft.UI.Xaml.Controls.ListBox
+Microsoft.UI.Xaml.Controls.ItemsControl
+Microsoft.UI.Xaml.Controls.Primitives.Selector
+Microsoft.UI.Xaml.Controls.ItemsPresenter
+

@@ -56,11 +56,11 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxItemsPresenter = (IRxItemsPresenter)this;
-            NativeControl.Set(this, ItemsPresenter.FooterProperty, thisAsIRxItemsPresenter.Footer);
-            NativeControl.Set(this, ItemsPresenter.FooterTransitionsProperty, thisAsIRxItemsPresenter.FooterTransitions);
-            NativeControl.Set(this, ItemsPresenter.HeaderProperty, thisAsIRxItemsPresenter.Header);
-            NativeControl.Set(this, ItemsPresenter.HeaderTransitionsProperty, thisAsIRxItemsPresenter.HeaderTransitions);
-            NativeControl.Set(this, ItemsPresenter.PaddingProperty, thisAsIRxItemsPresenter.Padding);
+            SetPropertyValue(NativeControl, ItemsPresenter.FooterProperty, thisAsIRxItemsPresenter.Footer);
+            SetPropertyValue(NativeControl, ItemsPresenter.FooterTransitionsProperty, thisAsIRxItemsPresenter.FooterTransitions);
+            SetPropertyValue(NativeControl, ItemsPresenter.HeaderProperty, thisAsIRxItemsPresenter.Header);
+            SetPropertyValue(NativeControl, ItemsPresenter.HeaderTransitionsProperty, thisAsIRxItemsPresenter.HeaderTransitions);
+            SetPropertyValue(NativeControl, ItemsPresenter.PaddingProperty, thisAsIRxItemsPresenter.Padding);
 
             base.OnUpdate();
 
@@ -72,21 +72,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxItemsPresenter = (IRxItemsPresenter)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public static partial class RxItemsPresenterExtensions
     {
@@ -95,9 +107,19 @@ namespace ReactorWinUI
             itemspresenter.Footer = new PropertyValue<object>(footer);
             return itemspresenter;
         }
+        public static T Footer<T>(this T itemspresenter, Func<object> footerFunc) where T : IRxItemsPresenter
+        {
+            itemspresenter.Footer = new PropertyValue<object>(footerFunc);
+            return itemspresenter;
+        }
         public static T FooterTransitions<T>(this T itemspresenter, TransitionCollection footerTransitions) where T : IRxItemsPresenter
         {
             itemspresenter.FooterTransitions = new PropertyValue<TransitionCollection>(footerTransitions);
+            return itemspresenter;
+        }
+        public static T FooterTransitions<T>(this T itemspresenter, Func<TransitionCollection> footerTransitionsFunc) where T : IRxItemsPresenter
+        {
+            itemspresenter.FooterTransitions = new PropertyValue<TransitionCollection>(footerTransitionsFunc);
             return itemspresenter;
         }
         public static T Header<T>(this T itemspresenter, object header) where T : IRxItemsPresenter
@@ -105,14 +127,29 @@ namespace ReactorWinUI
             itemspresenter.Header = new PropertyValue<object>(header);
             return itemspresenter;
         }
+        public static T Header<T>(this T itemspresenter, Func<object> headerFunc) where T : IRxItemsPresenter
+        {
+            itemspresenter.Header = new PropertyValue<object>(headerFunc);
+            return itemspresenter;
+        }
         public static T HeaderTransitions<T>(this T itemspresenter, TransitionCollection headerTransitions) where T : IRxItemsPresenter
         {
             itemspresenter.HeaderTransitions = new PropertyValue<TransitionCollection>(headerTransitions);
             return itemspresenter;
         }
+        public static T HeaderTransitions<T>(this T itemspresenter, Func<TransitionCollection> headerTransitionsFunc) where T : IRxItemsPresenter
+        {
+            itemspresenter.HeaderTransitions = new PropertyValue<TransitionCollection>(headerTransitionsFunc);
+            return itemspresenter;
+        }
         public static T Padding<T>(this T itemspresenter, Thickness padding) where T : IRxItemsPresenter
         {
             itemspresenter.Padding = new PropertyValue<Thickness>(padding);
+            return itemspresenter;
+        }
+        public static T Padding<T>(this T itemspresenter, Func<Thickness> paddingFunc) where T : IRxItemsPresenter
+        {
+            itemspresenter.Padding = new PropertyValue<Thickness>(paddingFunc);
             return itemspresenter;
         }
         public static T Padding<T>(this T itemspresenter, double leftRight, double topBottom) where T : IRxItemsPresenter

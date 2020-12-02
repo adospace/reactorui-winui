@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using Microsoft.UI.Xaml;
 using ReactorWinUI.Animations;
+using ReactorWinUI.Internals;
 
 namespace ReactorWinUI
 {
@@ -75,6 +76,7 @@ namespace ReactorWinUI
         private IReadOnlyList<VisualNode> _children = null;
 
         private bool _invalidated = false;
+
 
         protected VisualNode()
         {
@@ -206,7 +208,7 @@ namespace ReactorWinUI
             };
         }
 
-        internal virtual void Layout()
+        internal virtual void Layout(IRxComponentWithState containerComponent = null)
         {
             if (!IsLayoutCycleRequired)
                 return;
@@ -232,7 +234,7 @@ namespace ReactorWinUI
                 OnUpdate();
 
             foreach (var child in Children)
-                child.Layout();
+                child.Layout(containerComponent);
         }
 
         internal virtual void MergeChildrenFrom(IReadOnlyList<VisualNode> oldChildren)
@@ -417,7 +419,7 @@ namespace ReactorWinUI
             => OnCreatChild<TChild>();
 
         protected virtual TChild OnCreatChild<TChild>() where TChild : class, new() 
-            => new TChild();
+            => new();
     }
 
     public abstract class VisualNodeWithAttachedProperties : VisualNode
@@ -432,6 +434,8 @@ namespace ReactorWinUI
         bool TryGetDefaultPropertyValue(DependencyProperty dependencyProperty, out object value);
 
         bool SetDefaultPropertyValue(DependencyProperty dependencyProperty, object value);
+
+        //void SetPropertyValue(DependencyObject dependencyObject, DependencyProperty property, IPropertyValue propertyValue);
     }
 
 
@@ -439,9 +443,17 @@ namespace ReactorWinUI
     {
         protected DependencyObject _nativeControl;
 
+        private IRxComponentWithState _containerComponent;
+
         private Dictionary<DependencyProperty, object> _defaultPropertyValueBag = new Dictionary<DependencyProperty, object>();
 
         private readonly Dictionary<DependencyProperty, object> _attachedProperties = new();
+
+        internal override void Layout(IRxComponentWithState containerComponent = null)
+        {
+            _containerComponent = containerComponent;
+            base.Layout(containerComponent);
+        }
 
         public bool SetDefaultPropertyValue(DependencyProperty dependencyProperty, object value)
         {
@@ -551,6 +563,25 @@ namespace ReactorWinUI
         public override void SetAttachedProperty(DependencyProperty property, object value)
             => _attachedProperties[property] = value;
 
+        protected void SetPropertyValue(DependencyObject dependencyObject, DependencyProperty property, IPropertyValue propertyValue)
+        {
+            if (propertyValue != null)
+            {
+                SetDefaultPropertyValue(property, dependencyObject.GetValue(property));
+                dependencyObject.SetValue(property, propertyValue.GetValue());
+                if (_containerComponent != null && propertyValue.HasValueFunction)
+                {
+                    _containerComponent.RegisterOnStateChanged(propertyValue.GetValueAction(dependencyObject, property));
+                }
+            }
+            else
+            {
+                if (TryGetDefaultPropertyValue(property, out var defaultValue))
+                {
+                    dependencyObject.SetValue(property, defaultValue);
+                }
+            }
+        }
     }
 
 }

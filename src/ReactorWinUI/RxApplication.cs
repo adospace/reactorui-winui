@@ -8,6 +8,7 @@ using System.Windows;
 using ReactorWinUI.Internals;
 using Microsoft.UI.Xaml;
 using Microsoft.System;
+using System.Net.Http;
 
 namespace ReactorWinUI
 {
@@ -21,6 +22,8 @@ namespace ReactorWinUI
         public static RxApplication Instance { get; private set; }
         //private readonly Application _application;
         private readonly Type _rootComponentType;
+        private readonly DispatcherQueue _dispatcherQueue;
+
         //private readonly IRxApplicationHost _applicationHost;
         private RxComponent _rootComponent;
         private bool _sleeping = true;
@@ -40,8 +43,14 @@ namespace ReactorWinUI
             //_application = application ?? throw new ArgumentNullException(nameof(application));
             _rootComponentType = rootComponentType;
 
-            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _animationTimer = dispatcherQueue.CreateTimer();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
+            if (_dispatcherQueue == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            _animationTimer = _dispatcherQueue.CreateTimer();
             _animationTimer.Interval = TimeSpan.FromMilliseconds(16);
             _animationTimer.Tick += (s, e) =>
             {
@@ -159,11 +168,9 @@ namespace ReactorWinUI
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-
-            if (!dispatcherQueue.HasThreadAccess)
+            if (!_dispatcherQueue.HasThreadAccess)
             {
-                dispatcherQueue.TryEnqueue(new DispatcherQueueHandler(action));
+                _dispatcherQueue.TryEnqueue(new DispatcherQueueHandler(action));
             }
             else
             {
@@ -268,11 +275,11 @@ namespace ReactorWinUI
             //    await _rootElement.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => OnComponentAssemblyChanged(sender, e)).AsTask();
             //    return;
             //}
-            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            //var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-            if (!dispatcherQueue.HasThreadAccess)
+            if (!_dispatcherQueue.HasThreadAccess)
             {
-                dispatcherQueue.TryEnqueue(new DispatcherQueueHandler(ReloadRootComponent));
+                _dispatcherQueue.TryEnqueue(new DispatcherQueueHandler(ReloadRootComponent));
             }
             else
             {

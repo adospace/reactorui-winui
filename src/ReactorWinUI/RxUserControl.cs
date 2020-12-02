@@ -24,6 +24,7 @@ namespace ReactorWinUI
 {
     public partial interface IRxUserControl : IRxControl
     {
+
     }
 
     public partial class RxUserControl<T> : RxControl<T>, IRxUserControl where T : UserControl, new()
@@ -56,21 +57,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxUserControl = (IRxUserControl)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public partial class RxUserControl : RxUserControl<UserControl>
     {

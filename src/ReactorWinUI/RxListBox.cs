@@ -50,8 +50,8 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxListBox = (IRxListBox)this;
-            NativeControl.Set(this, ListBox.SelectionModeProperty, thisAsIRxListBox.SelectionMode);
-            NativeControl.Set(this, ListBox.SingleSelectionFollowsFocusProperty, thisAsIRxListBox.SingleSelectionFollowsFocus);
+            SetPropertyValue(NativeControl, ListBox.SelectionModeProperty, thisAsIRxListBox.SelectionMode);
+            SetPropertyValue(NativeControl, ListBox.SingleSelectionFollowsFocusProperty, thisAsIRxListBox.SingleSelectionFollowsFocus);
 
             base.OnUpdate();
 
@@ -63,21 +63,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxListBox = (IRxListBox)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public partial class RxListBox : RxListBox<ListBox>
     {
@@ -99,9 +111,19 @@ namespace ReactorWinUI
             listbox.SelectionMode = new PropertyValue<SelectionMode>(selectionMode);
             return listbox;
         }
+        public static T SelectionMode<T>(this T listbox, Func<SelectionMode> selectionModeFunc) where T : IRxListBox
+        {
+            listbox.SelectionMode = new PropertyValue<SelectionMode>(selectionModeFunc);
+            return listbox;
+        }
         public static T SingleSelectionFollowsFocus<T>(this T listbox, bool singleSelectionFollowsFocus) where T : IRxListBox
         {
             listbox.SingleSelectionFollowsFocus = new PropertyValue<bool>(singleSelectionFollowsFocus);
+            return listbox;
+        }
+        public static T SingleSelectionFollowsFocus<T>(this T listbox, Func<bool> singleSelectionFollowsFocusFunc) where T : IRxListBox
+        {
+            listbox.SingleSelectionFollowsFocus = new PropertyValue<bool>(singleSelectionFollowsFocusFunc);
             return listbox;
         }
     }

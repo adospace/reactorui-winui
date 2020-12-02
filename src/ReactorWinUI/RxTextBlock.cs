@@ -66,12 +66,6 @@ namespace ReactorWinUI
         {
 
         }
-
-        public RxTextBlock(string text)
-        {
-            this.Text(text);
-        }
-
         PropertyValue<int> IRxTextBlock.CharacterSpacing { get; set; }
         PropertyValue<FontFamily> IRxTextBlock.FontFamily { get; set; }
         PropertyValue<double> IRxTextBlock.FontSize { get; set; }
@@ -106,31 +100,31 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxTextBlock = (IRxTextBlock)this;
-            NativeControl.Set(this, TextBlock.CharacterSpacingProperty, thisAsIRxTextBlock.CharacterSpacing);
-            NativeControl.Set(this, TextBlock.FontFamilyProperty, thisAsIRxTextBlock.FontFamily);
-            NativeControl.Set(this, TextBlock.FontSizeProperty, thisAsIRxTextBlock.FontSize);
-            NativeControl.Set(this, TextBlock.FontStretchProperty, thisAsIRxTextBlock.FontStretch);
-            NativeControl.Set(this, TextBlock.FontStyleProperty, thisAsIRxTextBlock.FontStyle);
-            NativeControl.Set(this, TextBlock.FontWeightProperty, thisAsIRxTextBlock.FontWeight);
-            NativeControl.Set(this, TextBlock.ForegroundProperty, thisAsIRxTextBlock.Foreground);
-            NativeControl.Set(this, TextBlock.HorizontalTextAlignmentProperty, thisAsIRxTextBlock.HorizontalTextAlignment);
-            NativeControl.Set(this, TextBlock.IsColorFontEnabledProperty, thisAsIRxTextBlock.IsColorFontEnabled);
-            NativeControl.Set(this, TextBlock.IsTextScaleFactorEnabledProperty, thisAsIRxTextBlock.IsTextScaleFactorEnabled);
-            NativeControl.Set(this, TextBlock.IsTextSelectionEnabledProperty, thisAsIRxTextBlock.IsTextSelectionEnabled);
-            NativeControl.Set(this, TextBlock.LineHeightProperty, thisAsIRxTextBlock.LineHeight);
-            NativeControl.Set(this, TextBlock.LineStackingStrategyProperty, thisAsIRxTextBlock.LineStackingStrategy);
-            NativeControl.Set(this, TextBlock.MaxLinesProperty, thisAsIRxTextBlock.MaxLines);
-            NativeControl.Set(this, TextBlock.OpticalMarginAlignmentProperty, thisAsIRxTextBlock.OpticalMarginAlignment);
-            NativeControl.Set(this, TextBlock.PaddingProperty, thisAsIRxTextBlock.Padding);
-            NativeControl.Set(this, TextBlock.SelectionFlyoutProperty, thisAsIRxTextBlock.SelectionFlyout);
-            NativeControl.Set(this, TextBlock.SelectionHighlightColorProperty, thisAsIRxTextBlock.SelectionHighlightColor);
-            NativeControl.Set(this, TextBlock.TextProperty, thisAsIRxTextBlock.Text);
-            NativeControl.Set(this, TextBlock.TextAlignmentProperty, thisAsIRxTextBlock.TextAlignment);
-            NativeControl.Set(this, TextBlock.TextDecorationsProperty, thisAsIRxTextBlock.TextDecorations);
-            NativeControl.Set(this, TextBlock.TextLineBoundsProperty, thisAsIRxTextBlock.TextLineBounds);
-            NativeControl.Set(this, TextBlock.TextReadingOrderProperty, thisAsIRxTextBlock.TextReadingOrder);
-            NativeControl.Set(this, TextBlock.TextTrimmingProperty, thisAsIRxTextBlock.TextTrimming);
-            NativeControl.Set(this, TextBlock.TextWrappingProperty, thisAsIRxTextBlock.TextWrapping);
+            SetPropertyValue(NativeControl, TextBlock.CharacterSpacingProperty, thisAsIRxTextBlock.CharacterSpacing);
+            SetPropertyValue(NativeControl, TextBlock.FontFamilyProperty, thisAsIRxTextBlock.FontFamily);
+            SetPropertyValue(NativeControl, TextBlock.FontSizeProperty, thisAsIRxTextBlock.FontSize);
+            SetPropertyValue(NativeControl, TextBlock.FontStretchProperty, thisAsIRxTextBlock.FontStretch);
+            SetPropertyValue(NativeControl, TextBlock.FontStyleProperty, thisAsIRxTextBlock.FontStyle);
+            SetPropertyValue(NativeControl, TextBlock.FontWeightProperty, thisAsIRxTextBlock.FontWeight);
+            SetPropertyValue(NativeControl, TextBlock.ForegroundProperty, thisAsIRxTextBlock.Foreground);
+            SetPropertyValue(NativeControl, TextBlock.HorizontalTextAlignmentProperty, thisAsIRxTextBlock.HorizontalTextAlignment);
+            SetPropertyValue(NativeControl, TextBlock.IsColorFontEnabledProperty, thisAsIRxTextBlock.IsColorFontEnabled);
+            SetPropertyValue(NativeControl, TextBlock.IsTextScaleFactorEnabledProperty, thisAsIRxTextBlock.IsTextScaleFactorEnabled);
+            SetPropertyValue(NativeControl, TextBlock.IsTextSelectionEnabledProperty, thisAsIRxTextBlock.IsTextSelectionEnabled);
+            SetPropertyValue(NativeControl, TextBlock.LineHeightProperty, thisAsIRxTextBlock.LineHeight);
+            SetPropertyValue(NativeControl, TextBlock.LineStackingStrategyProperty, thisAsIRxTextBlock.LineStackingStrategy);
+            SetPropertyValue(NativeControl, TextBlock.MaxLinesProperty, thisAsIRxTextBlock.MaxLines);
+            SetPropertyValue(NativeControl, TextBlock.OpticalMarginAlignmentProperty, thisAsIRxTextBlock.OpticalMarginAlignment);
+            SetPropertyValue(NativeControl, TextBlock.PaddingProperty, thisAsIRxTextBlock.Padding);
+            SetPropertyValue(NativeControl, TextBlock.SelectionFlyoutProperty, thisAsIRxTextBlock.SelectionFlyout);
+            SetPropertyValue(NativeControl, TextBlock.SelectionHighlightColorProperty, thisAsIRxTextBlock.SelectionHighlightColor);
+            SetPropertyValue(NativeControl, TextBlock.TextProperty, thisAsIRxTextBlock.Text);
+            SetPropertyValue(NativeControl, TextBlock.TextAlignmentProperty, thisAsIRxTextBlock.TextAlignment);
+            SetPropertyValue(NativeControl, TextBlock.TextDecorationsProperty, thisAsIRxTextBlock.TextDecorations);
+            SetPropertyValue(NativeControl, TextBlock.TextLineBoundsProperty, thisAsIRxTextBlock.TextLineBounds);
+            SetPropertyValue(NativeControl, TextBlock.TextReadingOrderProperty, thisAsIRxTextBlock.TextReadingOrder);
+            SetPropertyValue(NativeControl, TextBlock.TextTrimmingProperty, thisAsIRxTextBlock.TextTrimming);
+            SetPropertyValue(NativeControl, TextBlock.TextWrappingProperty, thisAsIRxTextBlock.TextWrapping);
 
             base.OnUpdate();
 
@@ -142,6 +136,8 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxTextBlock = (IRxTextBlock)this;
             if (thisAsIRxTextBlock.SelectionChangedAction != null || thisAsIRxTextBlock.SelectionChangedActionWithArgs != null)
             {
@@ -149,6 +145,8 @@ namespace ReactorWinUI
             }
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
         private void NativeControl_SelectionChanged(object sender, RoutedEventArgs e)
@@ -160,14 +158,22 @@ namespace ReactorWinUI
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
                 NativeControl.SelectionChanged -= NativeControl_SelectionChanged;
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public static partial class RxTextBlockExtensions
     {
@@ -176,9 +182,19 @@ namespace ReactorWinUI
             textblock.CharacterSpacing = new PropertyValue<int>(characterSpacing);
             return textblock;
         }
+        public static T CharacterSpacing<T>(this T textblock, Func<int> characterSpacingFunc) where T : IRxTextBlock
+        {
+            textblock.CharacterSpacing = new PropertyValue<int>(characterSpacingFunc);
+            return textblock;
+        }
         public static T FontFamily<T>(this T textblock, FontFamily fontFamily) where T : IRxTextBlock
         {
             textblock.FontFamily = new PropertyValue<FontFamily>(fontFamily);
+            return textblock;
+        }
+        public static T FontFamily<T>(this T textblock, Func<FontFamily> fontFamilyFunc) where T : IRxTextBlock
+        {
+            textblock.FontFamily = new PropertyValue<FontFamily>(fontFamilyFunc);
             return textblock;
         }
         public static T FontSize<T>(this T textblock, double fontSize) where T : IRxTextBlock
@@ -186,9 +202,19 @@ namespace ReactorWinUI
             textblock.FontSize = new PropertyValue<double>(fontSize);
             return textblock;
         }
+        public static T FontSize<T>(this T textblock, Func<double> fontSizeFunc) where T : IRxTextBlock
+        {
+            textblock.FontSize = new PropertyValue<double>(fontSizeFunc);
+            return textblock;
+        }
         public static T FontStretch<T>(this T textblock, FontStretch fontStretch) where T : IRxTextBlock
         {
             textblock.FontStretch = new PropertyValue<FontStretch>(fontStretch);
+            return textblock;
+        }
+        public static T FontStretch<T>(this T textblock, Func<FontStretch> fontStretchFunc) where T : IRxTextBlock
+        {
+            textblock.FontStretch = new PropertyValue<FontStretch>(fontStretchFunc);
             return textblock;
         }
         public static T FontStyle<T>(this T textblock, FontStyle fontStyle) where T : IRxTextBlock
@@ -196,9 +222,19 @@ namespace ReactorWinUI
             textblock.FontStyle = new PropertyValue<FontStyle>(fontStyle);
             return textblock;
         }
+        public static T FontStyle<T>(this T textblock, Func<FontStyle> fontStyleFunc) where T : IRxTextBlock
+        {
+            textblock.FontStyle = new PropertyValue<FontStyle>(fontStyleFunc);
+            return textblock;
+        }
         public static T FontWeight<T>(this T textblock, FontWeight fontWeight) where T : IRxTextBlock
         {
             textblock.FontWeight = new PropertyValue<FontWeight>(fontWeight);
+            return textblock;
+        }
+        public static T FontWeight<T>(this T textblock, Func<FontWeight> fontWeightFunc) where T : IRxTextBlock
+        {
+            textblock.FontWeight = new PropertyValue<FontWeight>(fontWeightFunc);
             return textblock;
         }
         public static T Foreground<T>(this T textblock, Brush foreground) where T : IRxTextBlock
@@ -206,9 +242,19 @@ namespace ReactorWinUI
             textblock.Foreground = new PropertyValue<Brush>(foreground);
             return textblock;
         }
+        public static T Foreground<T>(this T textblock, Func<Brush> foregroundFunc) where T : IRxTextBlock
+        {
+            textblock.Foreground = new PropertyValue<Brush>(foregroundFunc);
+            return textblock;
+        }
         public static T HorizontalTextAlignment<T>(this T textblock, TextAlignment horizontalTextAlignment) where T : IRxTextBlock
         {
             textblock.HorizontalTextAlignment = new PropertyValue<TextAlignment>(horizontalTextAlignment);
+            return textblock;
+        }
+        public static T HorizontalTextAlignment<T>(this T textblock, Func<TextAlignment> horizontalTextAlignmentFunc) where T : IRxTextBlock
+        {
+            textblock.HorizontalTextAlignment = new PropertyValue<TextAlignment>(horizontalTextAlignmentFunc);
             return textblock;
         }
         public static T IsColorFontEnabled<T>(this T textblock, bool isColorFontEnabled) where T : IRxTextBlock
@@ -216,9 +262,19 @@ namespace ReactorWinUI
             textblock.IsColorFontEnabled = new PropertyValue<bool>(isColorFontEnabled);
             return textblock;
         }
+        public static T IsColorFontEnabled<T>(this T textblock, Func<bool> isColorFontEnabledFunc) where T : IRxTextBlock
+        {
+            textblock.IsColorFontEnabled = new PropertyValue<bool>(isColorFontEnabledFunc);
+            return textblock;
+        }
         public static T IsTextScaleFactorEnabled<T>(this T textblock, bool isTextScaleFactorEnabled) where T : IRxTextBlock
         {
             textblock.IsTextScaleFactorEnabled = new PropertyValue<bool>(isTextScaleFactorEnabled);
+            return textblock;
+        }
+        public static T IsTextScaleFactorEnabled<T>(this T textblock, Func<bool> isTextScaleFactorEnabledFunc) where T : IRxTextBlock
+        {
+            textblock.IsTextScaleFactorEnabled = new PropertyValue<bool>(isTextScaleFactorEnabledFunc);
             return textblock;
         }
         public static T IsTextSelectionEnabled<T>(this T textblock, bool isTextSelectionEnabled) where T : IRxTextBlock
@@ -226,9 +282,19 @@ namespace ReactorWinUI
             textblock.IsTextSelectionEnabled = new PropertyValue<bool>(isTextSelectionEnabled);
             return textblock;
         }
+        public static T IsTextSelectionEnabled<T>(this T textblock, Func<bool> isTextSelectionEnabledFunc) where T : IRxTextBlock
+        {
+            textblock.IsTextSelectionEnabled = new PropertyValue<bool>(isTextSelectionEnabledFunc);
+            return textblock;
+        }
         public static T LineHeight<T>(this T textblock, double lineHeight) where T : IRxTextBlock
         {
             textblock.LineHeight = new PropertyValue<double>(lineHeight);
+            return textblock;
+        }
+        public static T LineHeight<T>(this T textblock, Func<double> lineHeightFunc) where T : IRxTextBlock
+        {
+            textblock.LineHeight = new PropertyValue<double>(lineHeightFunc);
             return textblock;
         }
         public static T LineStackingStrategy<T>(this T textblock, LineStackingStrategy lineStackingStrategy) where T : IRxTextBlock
@@ -236,9 +302,19 @@ namespace ReactorWinUI
             textblock.LineStackingStrategy = new PropertyValue<LineStackingStrategy>(lineStackingStrategy);
             return textblock;
         }
+        public static T LineStackingStrategy<T>(this T textblock, Func<LineStackingStrategy> lineStackingStrategyFunc) where T : IRxTextBlock
+        {
+            textblock.LineStackingStrategy = new PropertyValue<LineStackingStrategy>(lineStackingStrategyFunc);
+            return textblock;
+        }
         public static T MaxLines<T>(this T textblock, int maxLines) where T : IRxTextBlock
         {
             textblock.MaxLines = new PropertyValue<int>(maxLines);
+            return textblock;
+        }
+        public static T MaxLines<T>(this T textblock, Func<int> maxLinesFunc) where T : IRxTextBlock
+        {
+            textblock.MaxLines = new PropertyValue<int>(maxLinesFunc);
             return textblock;
         }
         public static T OpticalMarginAlignment<T>(this T textblock, OpticalMarginAlignment opticalMarginAlignment) where T : IRxTextBlock
@@ -246,9 +322,19 @@ namespace ReactorWinUI
             textblock.OpticalMarginAlignment = new PropertyValue<OpticalMarginAlignment>(opticalMarginAlignment);
             return textblock;
         }
+        public static T OpticalMarginAlignment<T>(this T textblock, Func<OpticalMarginAlignment> opticalMarginAlignmentFunc) where T : IRxTextBlock
+        {
+            textblock.OpticalMarginAlignment = new PropertyValue<OpticalMarginAlignment>(opticalMarginAlignmentFunc);
+            return textblock;
+        }
         public static T Padding<T>(this T textblock, Thickness padding) where T : IRxTextBlock
         {
             textblock.Padding = new PropertyValue<Thickness>(padding);
+            return textblock;
+        }
+        public static T Padding<T>(this T textblock, Func<Thickness> paddingFunc) where T : IRxTextBlock
+        {
+            textblock.Padding = new PropertyValue<Thickness>(paddingFunc);
             return textblock;
         }
         public static T Padding<T>(this T textblock, double leftRight, double topBottom) where T : IRxTextBlock
@@ -266,9 +352,19 @@ namespace ReactorWinUI
             textblock.SelectionFlyout = new PropertyValue<FlyoutBase>(selectionFlyout);
             return textblock;
         }
+        public static T SelectionFlyout<T>(this T textblock, Func<FlyoutBase> selectionFlyoutFunc) where T : IRxTextBlock
+        {
+            textblock.SelectionFlyout = new PropertyValue<FlyoutBase>(selectionFlyoutFunc);
+            return textblock;
+        }
         public static T SelectionHighlightColor<T>(this T textblock, SolidColorBrush selectionHighlightColor) where T : IRxTextBlock
         {
             textblock.SelectionHighlightColor = new PropertyValue<SolidColorBrush>(selectionHighlightColor);
+            return textblock;
+        }
+        public static T SelectionHighlightColor<T>(this T textblock, Func<SolidColorBrush> selectionHighlightColorFunc) where T : IRxTextBlock
+        {
+            textblock.SelectionHighlightColor = new PropertyValue<SolidColorBrush>(selectionHighlightColorFunc);
             return textblock;
         }
         public static T Text<T>(this T textblock, string text) where T : IRxTextBlock
@@ -276,9 +372,19 @@ namespace ReactorWinUI
             textblock.Text = new PropertyValue<string>(text);
             return textblock;
         }
+        public static T Text<T>(this T textblock, Func<string> textFunc) where T : IRxTextBlock
+        {
+            textblock.Text = new PropertyValue<string>(textFunc);
+            return textblock;
+        }
         public static T TextAlignment<T>(this T textblock, TextAlignment textAlignment) where T : IRxTextBlock
         {
             textblock.TextAlignment = new PropertyValue<TextAlignment>(textAlignment);
+            return textblock;
+        }
+        public static T TextAlignment<T>(this T textblock, Func<TextAlignment> textAlignmentFunc) where T : IRxTextBlock
+        {
+            textblock.TextAlignment = new PropertyValue<TextAlignment>(textAlignmentFunc);
             return textblock;
         }
         public static T TextDecorations<T>(this T textblock, TextDecorations textDecorations) where T : IRxTextBlock
@@ -286,9 +392,19 @@ namespace ReactorWinUI
             textblock.TextDecorations = new PropertyValue<TextDecorations>(textDecorations);
             return textblock;
         }
+        public static T TextDecorations<T>(this T textblock, Func<TextDecorations> textDecorationsFunc) where T : IRxTextBlock
+        {
+            textblock.TextDecorations = new PropertyValue<TextDecorations>(textDecorationsFunc);
+            return textblock;
+        }
         public static T TextLineBounds<T>(this T textblock, TextLineBounds textLineBounds) where T : IRxTextBlock
         {
             textblock.TextLineBounds = new PropertyValue<TextLineBounds>(textLineBounds);
+            return textblock;
+        }
+        public static T TextLineBounds<T>(this T textblock, Func<TextLineBounds> textLineBoundsFunc) where T : IRxTextBlock
+        {
+            textblock.TextLineBounds = new PropertyValue<TextLineBounds>(textLineBoundsFunc);
             return textblock;
         }
         public static T TextReadingOrder<T>(this T textblock, TextReadingOrder textReadingOrder) where T : IRxTextBlock
@@ -296,14 +412,29 @@ namespace ReactorWinUI
             textblock.TextReadingOrder = new PropertyValue<TextReadingOrder>(textReadingOrder);
             return textblock;
         }
+        public static T TextReadingOrder<T>(this T textblock, Func<TextReadingOrder> textReadingOrderFunc) where T : IRxTextBlock
+        {
+            textblock.TextReadingOrder = new PropertyValue<TextReadingOrder>(textReadingOrderFunc);
+            return textblock;
+        }
         public static T TextTrimming<T>(this T textblock, TextTrimming textTrimming) where T : IRxTextBlock
         {
             textblock.TextTrimming = new PropertyValue<TextTrimming>(textTrimming);
             return textblock;
         }
+        public static T TextTrimming<T>(this T textblock, Func<TextTrimming> textTrimmingFunc) where T : IRxTextBlock
+        {
+            textblock.TextTrimming = new PropertyValue<TextTrimming>(textTrimmingFunc);
+            return textblock;
+        }
         public static T TextWrapping<T>(this T textblock, TextWrapping textWrapping) where T : IRxTextBlock
         {
             textblock.TextWrapping = new PropertyValue<TextWrapping>(textWrapping);
+            return textblock;
+        }
+        public static T TextWrapping<T>(this T textblock, Func<TextWrapping> textWrappingFunc) where T : IRxTextBlock
+        {
+            textblock.TextWrapping = new PropertyValue<TextWrapping>(textWrappingFunc);
             return textblock;
         }
         public static T OnSelectionChanged<T>(this T textblock, Action selectionchangedAction) where T : IRxTextBlock

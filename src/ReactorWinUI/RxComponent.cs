@@ -310,6 +310,11 @@ namespace ReactorWinUI
 
             _actionsRegisterdOnStateChange.Add(action);
         }
+
+        internal override void Layout(IRxComponentWithState containerComponent = null)
+        {
+            base.Layout(this);
+        }
     }
 
     public class EmptyProps : IProps

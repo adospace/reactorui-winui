@@ -50,8 +50,8 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxPanel = (IRxPanel)this;
-            NativeControl.Set(this, Panel.BackgroundProperty, thisAsIRxPanel.Background);
-            NativeControl.Set(this, Panel.ChildrenTransitionsProperty, thisAsIRxPanel.ChildrenTransitions);
+            SetPropertyValue(NativeControl, Panel.BackgroundProperty, thisAsIRxPanel.Background);
+            SetPropertyValue(NativeControl, Panel.ChildrenTransitionsProperty, thisAsIRxPanel.ChildrenTransitions);
 
             base.OnUpdate();
 
@@ -63,21 +63,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxPanel = (IRxPanel)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public static partial class RxPanelExtensions
     {
@@ -86,9 +98,19 @@ namespace ReactorWinUI
             panel.Background = new PropertyValue<Brush>(background);
             return panel;
         }
+        public static T Background<T>(this T panel, Func<Brush> backgroundFunc) where T : IRxPanel
+        {
+            panel.Background = new PropertyValue<Brush>(backgroundFunc);
+            return panel;
+        }
         public static T ChildrenTransitions<T>(this T panel, TransitionCollection childrenTransitions) where T : IRxPanel
         {
             panel.ChildrenTransitions = new PropertyValue<TransitionCollection>(childrenTransitions);
+            return panel;
+        }
+        public static T ChildrenTransitions<T>(this T panel, Func<TransitionCollection> childrenTransitionsFunc) where T : IRxPanel
+        {
+            panel.ChildrenTransitions = new PropertyValue<TransitionCollection>(childrenTransitionsFunc);
             return panel;
         }
     }

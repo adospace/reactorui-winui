@@ -48,7 +48,7 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxButton = (IRxButton)this;
-            NativeControl.Set(this, Button.FlyoutProperty, thisAsIRxButton.Flyout);
+            SetPropertyValue(NativeControl, Button.FlyoutProperty, thisAsIRxButton.Flyout);
 
             base.OnUpdate();
 
@@ -60,21 +60,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxButton = (IRxButton)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public partial class RxButton : RxButton<Button>
     {
@@ -94,6 +106,11 @@ namespace ReactorWinUI
         public static T Flyout<T>(this T button, FlyoutBase flyout) where T : IRxButton
         {
             button.Flyout = new PropertyValue<FlyoutBase>(flyout);
+            return button;
+        }
+        public static T Flyout<T>(this T button, Func<FlyoutBase> flyoutFunc) where T : IRxButton
+        {
+            button.Flyout = new PropertyValue<FlyoutBase>(flyoutFunc);
             return button;
         }
     }

@@ -19,17 +19,67 @@ using Windows.UI.Text;
 using Windows.Foundation;
 
 using ReactorWinUI.Internals;
-
+using System.Linq;
 
 namespace ReactorWinUI
 {
+    public partial interface IRxSelector : IRxItemsControl
+    {
+        Action<object, SelectionChangedEventArgs> SelectionChangedActionWithArgs { get; set; }
+    }
+
+    public partial class RxSelector<T>
+    {
+        Action<object, SelectionChangedEventArgs> IRxSelector.SelectionChangedActionWithArgs { get; set; }
+
+
+        partial void OnBeginAttachNativeEvents()
+        {
+            var thisAsIRxSelector = (IRxSelector)this;
+            if (thisAsIRxSelector.SelectionChangedActionWithArgs != null)
+            {
+                NativeControl.SelectionChanged += NativeControl_SelectionChanged;
+            }
+        }
+
+        private void NativeControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var thisAsIRxSelector = (IRxSelector)this;
+            thisAsIRxSelector.SelectionChangedActionWithArgs?.Invoke(sender, e);
+        }
+
+        partial void OnBeginDetachNativeEvents()
+        {
+            var thisAsIRxSelector = (IRxSelector)this;
+            if (thisAsIRxSelector.SelectionChangedActionWithArgs != null)
+            {
+                NativeControl.SelectionChanged -= NativeControl_SelectionChanged;
+            }
+        }
+
+    }
+
     public partial class RxSelectorExtensions
     {
-        //public static T OnSelectionChanged<T, I>(this T itemscontrol, Action<I> selectedItemAction) where T : IRxSelector
-        //{
-        //    itemscontrol.SelectionChangedActionWithArgs = (sender, e) => selectedItemAction((I)((Selector)sender).SelectedItem);
+        public static T OnSelectionChanged<T>(this T itemscontrol, Action<object, SelectionChangedEventArgs> selectedChangedAction) where T : IRxSelector
+        {
+            itemscontrol.SelectionChangedActionWithArgs = selectedChangedAction;
 
-        //    return itemscontrol;
-        //}
+            return itemscontrol;
+        }
+
+        public static T OnSelectionChanged<T, I>(this T itemscontrol, Action<I[], I[]> selectedChangedAction) where T : IRxSelector
+        {
+            itemscontrol.SelectionChangedActionWithArgs = (sender, args) => selectedChangedAction(args.AddedItems.Cast<I>().ToArray(), args.RemovedItems.Cast<I>().ToArray());
+
+            return itemscontrol;
+        }
+
+        public static T OnSelectedItemChanged<T, I>(this T itemscontrol, Action<I> selectedChangedAction) where T : IRxSelector
+        {
+            itemscontrol.SelectionChangedActionWithArgs = (sender, args) => selectedChangedAction((I)((Selector)sender).SelectedItem);
+
+            return itemscontrol;
+        }
     }
 }

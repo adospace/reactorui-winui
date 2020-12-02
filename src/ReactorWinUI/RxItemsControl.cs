@@ -52,10 +52,9 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxItemsControl = (IRxItemsControl)this;
-            NativeControl.Set(this, ItemsControl.DisplayMemberPathProperty, thisAsIRxItemsControl.DisplayMemberPath);
-            NativeControl.Set(this, ItemsControl.ItemContainerStyleProperty, thisAsIRxItemsControl.ItemContainerStyle);
-            NativeControl.Set(this, ItemsControl.ItemContainerTransitionsProperty, thisAsIRxItemsControl.ItemContainerTransitions);
-            //NativeControl.Set(this, ItemsControl.ItemsSourceProperty, thisAsIRxItemsControl.ItemsSource);
+            SetPropertyValue(NativeControl, ItemsControl.DisplayMemberPathProperty, thisAsIRxItemsControl.DisplayMemberPath);
+            SetPropertyValue(NativeControl, ItemsControl.ItemContainerStyleProperty, thisAsIRxItemsControl.ItemContainerStyle);
+            SetPropertyValue(NativeControl, ItemsControl.ItemContainerTransitionsProperty, thisAsIRxItemsControl.ItemContainerTransitions);
 
             base.OnUpdate();
 
@@ -67,21 +66,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxItemsControl = (IRxItemsControl)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public partial class RxItemsControl : RxItemsControl<ItemsControl>
     {
@@ -103,9 +114,19 @@ namespace ReactorWinUI
             itemscontrol.DisplayMemberPath = new PropertyValue<string>(displayMemberPath);
             return itemscontrol;
         }
+        public static T DisplayMemberPath<T>(this T itemscontrol, Func<string> displayMemberPathFunc) where T : IRxItemsControl
+        {
+            itemscontrol.DisplayMemberPath = new PropertyValue<string>(displayMemberPathFunc);
+            return itemscontrol;
+        }
         public static T ItemContainerStyle<T>(this T itemscontrol, Style itemContainerStyle) where T : IRxItemsControl
         {
             itemscontrol.ItemContainerStyle = new PropertyValue<Style>(itemContainerStyle);
+            return itemscontrol;
+        }
+        public static T ItemContainerStyle<T>(this T itemscontrol, Func<Style> itemContainerStyleFunc) where T : IRxItemsControl
+        {
+            itemscontrol.ItemContainerStyle = new PropertyValue<Style>(itemContainerStyleFunc);
             return itemscontrol;
         }
         public static T ItemContainerTransitions<T>(this T itemscontrol, TransitionCollection itemContainerTransitions) where T : IRxItemsControl
@@ -113,6 +134,10 @@ namespace ReactorWinUI
             itemscontrol.ItemContainerTransitions = new PropertyValue<TransitionCollection>(itemContainerTransitions);
             return itemscontrol;
         }
-
+        public static T ItemContainerTransitions<T>(this T itemscontrol, Func<TransitionCollection> itemContainerTransitionsFunc) where T : IRxItemsControl
+        {
+            itemscontrol.ItemContainerTransitions = new PropertyValue<TransitionCollection>(itemContainerTransitionsFunc);
+            return itemscontrol;
+        }
     }
 }

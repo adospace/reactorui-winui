@@ -54,10 +54,10 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxSelector = (IRxSelector)this;
-            NativeControl.Set(this, Selector.SelectedIndexProperty, thisAsIRxSelector.SelectedIndex);
-            NativeControl.Set(this, Selector.SelectedItemProperty, thisAsIRxSelector.SelectedItem);
-            NativeControl.Set(this, Selector.SelectedValueProperty, thisAsIRxSelector.SelectedValue);
-            NativeControl.Set(this, Selector.SelectedValuePathProperty, thisAsIRxSelector.SelectedValuePath);
+            SetPropertyValue(NativeControl, Selector.SelectedIndexProperty, thisAsIRxSelector.SelectedIndex);
+            SetPropertyValue(NativeControl, Selector.SelectedItemProperty, thisAsIRxSelector.SelectedItem);
+            SetPropertyValue(NativeControl, Selector.SelectedValueProperty, thisAsIRxSelector.SelectedValue);
+            SetPropertyValue(NativeControl, Selector.SelectedValuePathProperty, thisAsIRxSelector.SelectedValuePath);
 
             base.OnUpdate();
 
@@ -69,21 +69,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxSelector = (IRxSelector)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public static partial class RxSelectorExtensions
     {
@@ -92,9 +104,19 @@ namespace ReactorWinUI
             selector.SelectedIndex = new PropertyValue<int>(selectedIndex);
             return selector;
         }
+        public static T SelectedIndex<T>(this T selector, Func<int> selectedIndexFunc) where T : IRxSelector
+        {
+            selector.SelectedIndex = new PropertyValue<int>(selectedIndexFunc);
+            return selector;
+        }
         public static T SelectedItem<T>(this T selector, object selectedItem) where T : IRxSelector
         {
             selector.SelectedItem = new PropertyValue<object>(selectedItem);
+            return selector;
+        }
+        public static T SelectedItem<T>(this T selector, Func<object> selectedItemFunc) where T : IRxSelector
+        {
+            selector.SelectedItem = new PropertyValue<object>(selectedItemFunc);
             return selector;
         }
         public static T SelectedValue<T>(this T selector, object selectedValue) where T : IRxSelector
@@ -102,9 +124,19 @@ namespace ReactorWinUI
             selector.SelectedValue = new PropertyValue<object>(selectedValue);
             return selector;
         }
+        public static T SelectedValue<T>(this T selector, Func<object> selectedValueFunc) where T : IRxSelector
+        {
+            selector.SelectedValue = new PropertyValue<object>(selectedValueFunc);
+            return selector;
+        }
         public static T SelectedValuePath<T>(this T selector, string selectedValuePath) where T : IRxSelector
         {
             selector.SelectedValuePath = new PropertyValue<string>(selectedValuePath);
+            return selector;
+        }
+        public static T SelectedValuePath<T>(this T selector, Func<string> selectedValuePathFunc) where T : IRxSelector
+        {
+            selector.SelectedValuePath = new PropertyValue<string>(selectedValuePathFunc);
             return selector;
         }
     }

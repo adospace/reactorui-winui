@@ -52,9 +52,9 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxFrame = (IRxFrame)this;
-            NativeControl.Set(this, Frame.CacheSizeProperty, thisAsIRxFrame.CacheSize);
-            NativeControl.Set(this, Frame.IsNavigationStackEnabledProperty, thisAsIRxFrame.IsNavigationStackEnabled);
-            NativeControl.Set(this, Frame.SourcePageTypeProperty, thisAsIRxFrame.SourcePageType);
+            SetPropertyValue(NativeControl, Frame.CacheSizeProperty, thisAsIRxFrame.CacheSize);
+            SetPropertyValue(NativeControl, Frame.IsNavigationStackEnabledProperty, thisAsIRxFrame.IsNavigationStackEnabled);
+            SetPropertyValue(NativeControl, Frame.SourcePageTypeProperty, thisAsIRxFrame.SourcePageType);
 
             base.OnUpdate();
 
@@ -66,21 +66,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxFrame = (IRxFrame)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public partial class RxFrame : RxFrame<Frame>
     {
@@ -102,14 +114,29 @@ namespace ReactorWinUI
             frame.CacheSize = new PropertyValue<int>(cacheSize);
             return frame;
         }
+        public static T CacheSize<T>(this T frame, Func<int> cacheSizeFunc) where T : IRxFrame
+        {
+            frame.CacheSize = new PropertyValue<int>(cacheSizeFunc);
+            return frame;
+        }
         public static T IsNavigationStackEnabled<T>(this T frame, bool isNavigationStackEnabled) where T : IRxFrame
         {
             frame.IsNavigationStackEnabled = new PropertyValue<bool>(isNavigationStackEnabled);
             return frame;
         }
+        public static T IsNavigationStackEnabled<T>(this T frame, Func<bool> isNavigationStackEnabledFunc) where T : IRxFrame
+        {
+            frame.IsNavigationStackEnabled = new PropertyValue<bool>(isNavigationStackEnabledFunc);
+            return frame;
+        }
         public static T SourcePageType<T>(this T frame, Type sourcePageType) where T : IRxFrame
         {
             frame.SourcePageType = new PropertyValue<Type>(sourcePageType);
+            return frame;
+        }
+        public static T SourcePageType<T>(this T frame, Func<Type> sourcePageTypeFunc) where T : IRxFrame
+        {
+            frame.SourcePageType = new PropertyValue<Type>(sourcePageTypeFunc);
             return frame;
         }
     }

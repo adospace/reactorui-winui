@@ -52,7 +52,7 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxButtonBase = (IRxButtonBase)this;
-            NativeControl.Set(this, ButtonBase.ClickModeProperty, thisAsIRxButtonBase.ClickMode);
+            SetPropertyValue(NativeControl, ButtonBase.ClickModeProperty, thisAsIRxButtonBase.ClickMode);
 
             base.OnUpdate();
 
@@ -64,6 +64,8 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxButtonBase = (IRxButtonBase)this;
             if (thisAsIRxButtonBase.ClickAction != null || thisAsIRxButtonBase.ClickActionWithArgs != null)
             {
@@ -71,6 +73,8 @@ namespace ReactorWinUI
             }
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
         private void NativeControl_Click(object sender, RoutedEventArgs e)
@@ -82,20 +86,33 @@ namespace ReactorWinUI
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
                 NativeControl.Click -= NativeControl_Click;
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public static partial class RxButtonBaseExtensions
     {
         public static T ClickMode<T>(this T buttonbase, ClickMode clickMode) where T : IRxButtonBase
         {
             buttonbase.ClickMode = new PropertyValue<ClickMode>(clickMode);
+            return buttonbase;
+        }
+        public static T ClickMode<T>(this T buttonbase, Func<ClickMode> clickModeFunc) where T : IRxButtonBase
+        {
+            buttonbase.ClickMode = new PropertyValue<ClickMode>(clickModeFunc);
             return buttonbase;
         }
         public static T OnClick<T>(this T buttonbase, Action clickAction) where T : IRxButtonBase

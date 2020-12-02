@@ -60,13 +60,13 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxGrid = (IRxGrid)this;
-            NativeControl.Set(this, Grid.BackgroundSizingProperty, thisAsIRxGrid.BackgroundSizing);
-            NativeControl.Set(this, Grid.BorderBrushProperty, thisAsIRxGrid.BorderBrush);
-            NativeControl.Set(this, Grid.BorderThicknessProperty, thisAsIRxGrid.BorderThickness);
-            NativeControl.Set(this, Grid.ColumnSpacingProperty, thisAsIRxGrid.ColumnSpacing);
-            NativeControl.Set(this, Grid.CornerRadiusProperty, thisAsIRxGrid.CornerRadius);
-            NativeControl.Set(this, Grid.PaddingProperty, thisAsIRxGrid.Padding);
-            NativeControl.Set(this, Grid.RowSpacingProperty, thisAsIRxGrid.RowSpacing);
+            SetPropertyValue(NativeControl, Grid.BackgroundSizingProperty, thisAsIRxGrid.BackgroundSizing);
+            SetPropertyValue(NativeControl, Grid.BorderBrushProperty, thisAsIRxGrid.BorderBrush);
+            SetPropertyValue(NativeControl, Grid.BorderThicknessProperty, thisAsIRxGrid.BorderThickness);
+            SetPropertyValue(NativeControl, Grid.ColumnSpacingProperty, thisAsIRxGrid.ColumnSpacing);
+            SetPropertyValue(NativeControl, Grid.CornerRadiusProperty, thisAsIRxGrid.CornerRadius);
+            SetPropertyValue(NativeControl, Grid.PaddingProperty, thisAsIRxGrid.Padding);
+            SetPropertyValue(NativeControl, Grid.RowSpacingProperty, thisAsIRxGrid.RowSpacing);
 
             base.OnUpdate();
 
@@ -78,21 +78,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxGrid = (IRxGrid)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public partial class RxGrid : RxGrid<Grid>
     {
@@ -114,14 +126,29 @@ namespace ReactorWinUI
             grid.BackgroundSizing = new PropertyValue<BackgroundSizing>(backgroundSizing);
             return grid;
         }
+        public static T BackgroundSizing<T>(this T grid, Func<BackgroundSizing> backgroundSizingFunc) where T : IRxGrid
+        {
+            grid.BackgroundSizing = new PropertyValue<BackgroundSizing>(backgroundSizingFunc);
+            return grid;
+        }
         public static T BorderBrush<T>(this T grid, Brush borderBrush) where T : IRxGrid
         {
             grid.BorderBrush = new PropertyValue<Brush>(borderBrush);
             return grid;
         }
+        public static T BorderBrush<T>(this T grid, Func<Brush> borderBrushFunc) where T : IRxGrid
+        {
+            grid.BorderBrush = new PropertyValue<Brush>(borderBrushFunc);
+            return grid;
+        }
         public static T BorderThickness<T>(this T grid, Thickness borderThickness) where T : IRxGrid
         {
             grid.BorderThickness = new PropertyValue<Thickness>(borderThickness);
+            return grid;
+        }
+        public static T BorderThickness<T>(this T grid, Func<Thickness> borderThicknessFunc) where T : IRxGrid
+        {
+            grid.BorderThickness = new PropertyValue<Thickness>(borderThicknessFunc);
             return grid;
         }
         public static T BorderThickness<T>(this T grid, double leftRight, double topBottom) where T : IRxGrid
@@ -139,14 +166,29 @@ namespace ReactorWinUI
             grid.ColumnSpacing = new PropertyValue<double>(columnSpacing);
             return grid;
         }
+        public static T ColumnSpacing<T>(this T grid, Func<double> columnSpacingFunc) where T : IRxGrid
+        {
+            grid.ColumnSpacing = new PropertyValue<double>(columnSpacingFunc);
+            return grid;
+        }
         public static T CornerRadius<T>(this T grid, CornerRadius cornerRadius) where T : IRxGrid
         {
             grid.CornerRadius = new PropertyValue<CornerRadius>(cornerRadius);
             return grid;
         }
+        public static T CornerRadius<T>(this T grid, Func<CornerRadius> cornerRadiusFunc) where T : IRxGrid
+        {
+            grid.CornerRadius = new PropertyValue<CornerRadius>(cornerRadiusFunc);
+            return grid;
+        }
         public static T Padding<T>(this T grid, Thickness padding) where T : IRxGrid
         {
             grid.Padding = new PropertyValue<Thickness>(padding);
+            return grid;
+        }
+        public static T Padding<T>(this T grid, Func<Thickness> paddingFunc) where T : IRxGrid
+        {
+            grid.Padding = new PropertyValue<Thickness>(paddingFunc);
             return grid;
         }
         public static T Padding<T>(this T grid, double leftRight, double topBottom) where T : IRxGrid
@@ -162,6 +204,11 @@ namespace ReactorWinUI
         public static T RowSpacing<T>(this T grid, double rowSpacing) where T : IRxGrid
         {
             grid.RowSpacing = new PropertyValue<double>(rowSpacing);
+            return grid;
+        }
+        public static T RowSpacing<T>(this T grid, Func<double> rowSpacingFunc) where T : IRxGrid
+        {
+            grid.RowSpacing = new PropertyValue<double>(rowSpacingFunc);
             return grid;
         }
     }

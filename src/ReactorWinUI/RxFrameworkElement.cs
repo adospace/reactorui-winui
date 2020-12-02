@@ -100,29 +100,29 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxFrameworkElement = (IRxFrameworkElement)this;
-            NativeControl.Set(this, FrameworkElement.AllowFocusOnInteractionProperty, thisAsIRxFrameworkElement.AllowFocusOnInteraction);
-            NativeControl.Set(this, FrameworkElement.AllowFocusWhenDisabledProperty, thisAsIRxFrameworkElement.AllowFocusWhenDisabled);
-            NativeControl.Set(this, FrameworkElement.DataContextProperty, thisAsIRxFrameworkElement.DataContext);
-            NativeControl.Set(this, FrameworkElement.FlowDirectionProperty, thisAsIRxFrameworkElement.FlowDirection);
-            NativeControl.Set(this, FrameworkElement.FocusVisualMarginProperty, thisAsIRxFrameworkElement.FocusVisualMargin);
-            NativeControl.Set(this, FrameworkElement.FocusVisualPrimaryBrushProperty, thisAsIRxFrameworkElement.FocusVisualPrimaryBrush);
-            NativeControl.Set(this, FrameworkElement.FocusVisualPrimaryThicknessProperty, thisAsIRxFrameworkElement.FocusVisualPrimaryThickness);
-            NativeControl.Set(this, FrameworkElement.FocusVisualSecondaryBrushProperty, thisAsIRxFrameworkElement.FocusVisualSecondaryBrush);
-            NativeControl.Set(this, FrameworkElement.FocusVisualSecondaryThicknessProperty, thisAsIRxFrameworkElement.FocusVisualSecondaryThickness);
-            NativeControl.Set(this, FrameworkElement.HeightProperty, thisAsIRxFrameworkElement.Height);
-            NativeControl.Set(this, FrameworkElement.HorizontalAlignmentProperty, thisAsIRxFrameworkElement.HorizontalAlignment);
-            NativeControl.Set(this, FrameworkElement.LanguageProperty, thisAsIRxFrameworkElement.Language);
-            NativeControl.Set(this, FrameworkElement.MarginProperty, thisAsIRxFrameworkElement.Margin);
-            NativeControl.Set(this, FrameworkElement.MaxHeightProperty, thisAsIRxFrameworkElement.MaxHeight);
-            NativeControl.Set(this, FrameworkElement.MaxWidthProperty, thisAsIRxFrameworkElement.MaxWidth);
-            NativeControl.Set(this, FrameworkElement.MinHeightProperty, thisAsIRxFrameworkElement.MinHeight);
-            NativeControl.Set(this, FrameworkElement.MinWidthProperty, thisAsIRxFrameworkElement.MinWidth);
-            NativeControl.Set(this, FrameworkElement.NameProperty, thisAsIRxFrameworkElement.Name);
-            NativeControl.Set(this, FrameworkElement.RequestedThemeProperty, thisAsIRxFrameworkElement.RequestedTheme);
-            NativeControl.Set(this, FrameworkElement.StyleProperty, thisAsIRxFrameworkElement.Style);
-            NativeControl.Set(this, FrameworkElement.TagProperty, thisAsIRxFrameworkElement.Tag);
-            NativeControl.Set(this, FrameworkElement.VerticalAlignmentProperty, thisAsIRxFrameworkElement.VerticalAlignment);
-            NativeControl.Set(this, FrameworkElement.WidthProperty, thisAsIRxFrameworkElement.Width);
+            SetPropertyValue(NativeControl, FrameworkElement.AllowFocusOnInteractionProperty, thisAsIRxFrameworkElement.AllowFocusOnInteraction);
+            SetPropertyValue(NativeControl, FrameworkElement.AllowFocusWhenDisabledProperty, thisAsIRxFrameworkElement.AllowFocusWhenDisabled);
+            SetPropertyValue(NativeControl, FrameworkElement.DataContextProperty, thisAsIRxFrameworkElement.DataContext);
+            SetPropertyValue(NativeControl, FrameworkElement.FlowDirectionProperty, thisAsIRxFrameworkElement.FlowDirection);
+            SetPropertyValue(NativeControl, FrameworkElement.FocusVisualMarginProperty, thisAsIRxFrameworkElement.FocusVisualMargin);
+            SetPropertyValue(NativeControl, FrameworkElement.FocusVisualPrimaryBrushProperty, thisAsIRxFrameworkElement.FocusVisualPrimaryBrush);
+            SetPropertyValue(NativeControl, FrameworkElement.FocusVisualPrimaryThicknessProperty, thisAsIRxFrameworkElement.FocusVisualPrimaryThickness);
+            SetPropertyValue(NativeControl, FrameworkElement.FocusVisualSecondaryBrushProperty, thisAsIRxFrameworkElement.FocusVisualSecondaryBrush);
+            SetPropertyValue(NativeControl, FrameworkElement.FocusVisualSecondaryThicknessProperty, thisAsIRxFrameworkElement.FocusVisualSecondaryThickness);
+            SetPropertyValue(NativeControl, FrameworkElement.HeightProperty, thisAsIRxFrameworkElement.Height);
+            SetPropertyValue(NativeControl, FrameworkElement.HorizontalAlignmentProperty, thisAsIRxFrameworkElement.HorizontalAlignment);
+            SetPropertyValue(NativeControl, FrameworkElement.LanguageProperty, thisAsIRxFrameworkElement.Language);
+            SetPropertyValue(NativeControl, FrameworkElement.MarginProperty, thisAsIRxFrameworkElement.Margin);
+            SetPropertyValue(NativeControl, FrameworkElement.MaxHeightProperty, thisAsIRxFrameworkElement.MaxHeight);
+            SetPropertyValue(NativeControl, FrameworkElement.MaxWidthProperty, thisAsIRxFrameworkElement.MaxWidth);
+            SetPropertyValue(NativeControl, FrameworkElement.MinHeightProperty, thisAsIRxFrameworkElement.MinHeight);
+            SetPropertyValue(NativeControl, FrameworkElement.MinWidthProperty, thisAsIRxFrameworkElement.MinWidth);
+            SetPropertyValue(NativeControl, FrameworkElement.NameProperty, thisAsIRxFrameworkElement.Name);
+            SetPropertyValue(NativeControl, FrameworkElement.RequestedThemeProperty, thisAsIRxFrameworkElement.RequestedTheme);
+            SetPropertyValue(NativeControl, FrameworkElement.StyleProperty, thisAsIRxFrameworkElement.Style);
+            SetPropertyValue(NativeControl, FrameworkElement.TagProperty, thisAsIRxFrameworkElement.Tag);
+            SetPropertyValue(NativeControl, FrameworkElement.VerticalAlignmentProperty, thisAsIRxFrameworkElement.VerticalAlignment);
+            SetPropertyValue(NativeControl, FrameworkElement.WidthProperty, thisAsIRxFrameworkElement.Width);
 
             base.OnUpdate();
 
@@ -134,6 +134,8 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxFrameworkElement = (IRxFrameworkElement)this;
             if (thisAsIRxFrameworkElement.LoadedAction != null || thisAsIRxFrameworkElement.LoadedActionWithArgs != null)
             {
@@ -145,6 +147,8 @@ namespace ReactorWinUI
             }
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
         private void NativeControl_Loaded(object sender, RoutedEventArgs e)
@@ -162,6 +166,8 @@ namespace ReactorWinUI
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
                 NativeControl.Loaded -= NativeControl_Loaded;
@@ -169,8 +175,14 @@ namespace ReactorWinUI
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public static partial class RxFrameworkElementExtensions
     {
@@ -179,9 +191,19 @@ namespace ReactorWinUI
             frameworkelement.AllowFocusOnInteraction = new PropertyValue<bool>(allowFocusOnInteraction);
             return frameworkelement;
         }
+        public static T AllowFocusOnInteraction<T>(this T frameworkelement, Func<bool> allowFocusOnInteractionFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.AllowFocusOnInteraction = new PropertyValue<bool>(allowFocusOnInteractionFunc);
+            return frameworkelement;
+        }
         public static T AllowFocusWhenDisabled<T>(this T frameworkelement, bool allowFocusWhenDisabled) where T : IRxFrameworkElement
         {
             frameworkelement.AllowFocusWhenDisabled = new PropertyValue<bool>(allowFocusWhenDisabled);
+            return frameworkelement;
+        }
+        public static T AllowFocusWhenDisabled<T>(this T frameworkelement, Func<bool> allowFocusWhenDisabledFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.AllowFocusWhenDisabled = new PropertyValue<bool>(allowFocusWhenDisabledFunc);
             return frameworkelement;
         }
         public static T DataContext<T>(this T frameworkelement, object dataContext) where T : IRxFrameworkElement
@@ -189,14 +211,29 @@ namespace ReactorWinUI
             frameworkelement.DataContext = new PropertyValue<object>(dataContext);
             return frameworkelement;
         }
+        public static T DataContext<T>(this T frameworkelement, Func<object> dataContextFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.DataContext = new PropertyValue<object>(dataContextFunc);
+            return frameworkelement;
+        }
         public static T FlowDirection<T>(this T frameworkelement, FlowDirection flowDirection) where T : IRxFrameworkElement
         {
             frameworkelement.FlowDirection = new PropertyValue<FlowDirection>(flowDirection);
             return frameworkelement;
         }
+        public static T FlowDirection<T>(this T frameworkelement, Func<FlowDirection> flowDirectionFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.FlowDirection = new PropertyValue<FlowDirection>(flowDirectionFunc);
+            return frameworkelement;
+        }
         public static T FocusVisualMargin<T>(this T frameworkelement, Thickness focusVisualMargin) where T : IRxFrameworkElement
         {
             frameworkelement.FocusVisualMargin = new PropertyValue<Thickness>(focusVisualMargin);
+            return frameworkelement;
+        }
+        public static T FocusVisualMargin<T>(this T frameworkelement, Func<Thickness> focusVisualMarginFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.FocusVisualMargin = new PropertyValue<Thickness>(focusVisualMarginFunc);
             return frameworkelement;
         }
         public static T FocusVisualMargin<T>(this T frameworkelement, double leftRight, double topBottom) where T : IRxFrameworkElement
@@ -214,9 +251,19 @@ namespace ReactorWinUI
             frameworkelement.FocusVisualPrimaryBrush = new PropertyValue<Brush>(focusVisualPrimaryBrush);
             return frameworkelement;
         }
+        public static T FocusVisualPrimaryBrush<T>(this T frameworkelement, Func<Brush> focusVisualPrimaryBrushFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.FocusVisualPrimaryBrush = new PropertyValue<Brush>(focusVisualPrimaryBrushFunc);
+            return frameworkelement;
+        }
         public static T FocusVisualPrimaryThickness<T>(this T frameworkelement, Thickness focusVisualPrimaryThickness) where T : IRxFrameworkElement
         {
             frameworkelement.FocusVisualPrimaryThickness = new PropertyValue<Thickness>(focusVisualPrimaryThickness);
+            return frameworkelement;
+        }
+        public static T FocusVisualPrimaryThickness<T>(this T frameworkelement, Func<Thickness> focusVisualPrimaryThicknessFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.FocusVisualPrimaryThickness = new PropertyValue<Thickness>(focusVisualPrimaryThicknessFunc);
             return frameworkelement;
         }
         public static T FocusVisualPrimaryThickness<T>(this T frameworkelement, double leftRight, double topBottom) where T : IRxFrameworkElement
@@ -234,9 +281,19 @@ namespace ReactorWinUI
             frameworkelement.FocusVisualSecondaryBrush = new PropertyValue<Brush>(focusVisualSecondaryBrush);
             return frameworkelement;
         }
+        public static T FocusVisualSecondaryBrush<T>(this T frameworkelement, Func<Brush> focusVisualSecondaryBrushFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.FocusVisualSecondaryBrush = new PropertyValue<Brush>(focusVisualSecondaryBrushFunc);
+            return frameworkelement;
+        }
         public static T FocusVisualSecondaryThickness<T>(this T frameworkelement, Thickness focusVisualSecondaryThickness) where T : IRxFrameworkElement
         {
             frameworkelement.FocusVisualSecondaryThickness = new PropertyValue<Thickness>(focusVisualSecondaryThickness);
+            return frameworkelement;
+        }
+        public static T FocusVisualSecondaryThickness<T>(this T frameworkelement, Func<Thickness> focusVisualSecondaryThicknessFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.FocusVisualSecondaryThickness = new PropertyValue<Thickness>(focusVisualSecondaryThicknessFunc);
             return frameworkelement;
         }
         public static T FocusVisualSecondaryThickness<T>(this T frameworkelement, double leftRight, double topBottom) where T : IRxFrameworkElement
@@ -254,9 +311,19 @@ namespace ReactorWinUI
             frameworkelement.Height = new PropertyValue<double>(height);
             return frameworkelement;
         }
+        public static T Height<T>(this T frameworkelement, Func<double> heightFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.Height = new PropertyValue<double>(heightFunc);
+            return frameworkelement;
+        }
         public static T HorizontalAlignment<T>(this T frameworkelement, HorizontalAlignment horizontalAlignment) where T : IRxFrameworkElement
         {
             frameworkelement.HorizontalAlignment = new PropertyValue<HorizontalAlignment>(horizontalAlignment);
+            return frameworkelement;
+        }
+        public static T HorizontalAlignment<T>(this T frameworkelement, Func<HorizontalAlignment> horizontalAlignmentFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.HorizontalAlignment = new PropertyValue<HorizontalAlignment>(horizontalAlignmentFunc);
             return frameworkelement;
         }
         public static T Language<T>(this T frameworkelement, string language) where T : IRxFrameworkElement
@@ -264,9 +331,19 @@ namespace ReactorWinUI
             frameworkelement.Language = new PropertyValue<string>(language);
             return frameworkelement;
         }
+        public static T Language<T>(this T frameworkelement, Func<string> languageFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.Language = new PropertyValue<string>(languageFunc);
+            return frameworkelement;
+        }
         public static T Margin<T>(this T frameworkelement, Thickness margin) where T : IRxFrameworkElement
         {
             frameworkelement.Margin = new PropertyValue<Thickness>(margin);
+            return frameworkelement;
+        }
+        public static T Margin<T>(this T frameworkelement, Func<Thickness> marginFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.Margin = new PropertyValue<Thickness>(marginFunc);
             return frameworkelement;
         }
         public static T Margin<T>(this T frameworkelement, double leftRight, double topBottom) where T : IRxFrameworkElement
@@ -284,9 +361,19 @@ namespace ReactorWinUI
             frameworkelement.MaxHeight = new PropertyValue<double>(maxHeight);
             return frameworkelement;
         }
+        public static T MaxHeight<T>(this T frameworkelement, Func<double> maxHeightFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.MaxHeight = new PropertyValue<double>(maxHeightFunc);
+            return frameworkelement;
+        }
         public static T MaxWidth<T>(this T frameworkelement, double maxWidth) where T : IRxFrameworkElement
         {
             frameworkelement.MaxWidth = new PropertyValue<double>(maxWidth);
+            return frameworkelement;
+        }
+        public static T MaxWidth<T>(this T frameworkelement, Func<double> maxWidthFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.MaxWidth = new PropertyValue<double>(maxWidthFunc);
             return frameworkelement;
         }
         public static T MinHeight<T>(this T frameworkelement, double minHeight) where T : IRxFrameworkElement
@@ -294,9 +381,19 @@ namespace ReactorWinUI
             frameworkelement.MinHeight = new PropertyValue<double>(minHeight);
             return frameworkelement;
         }
+        public static T MinHeight<T>(this T frameworkelement, Func<double> minHeightFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.MinHeight = new PropertyValue<double>(minHeightFunc);
+            return frameworkelement;
+        }
         public static T MinWidth<T>(this T frameworkelement, double minWidth) where T : IRxFrameworkElement
         {
             frameworkelement.MinWidth = new PropertyValue<double>(minWidth);
+            return frameworkelement;
+        }
+        public static T MinWidth<T>(this T frameworkelement, Func<double> minWidthFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.MinWidth = new PropertyValue<double>(minWidthFunc);
             return frameworkelement;
         }
         public static T Name<T>(this T frameworkelement, string name) where T : IRxFrameworkElement
@@ -304,9 +401,19 @@ namespace ReactorWinUI
             frameworkelement.Name = new PropertyValue<string>(name);
             return frameworkelement;
         }
+        public static T Name<T>(this T frameworkelement, Func<string> nameFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.Name = new PropertyValue<string>(nameFunc);
+            return frameworkelement;
+        }
         public static T RequestedTheme<T>(this T frameworkelement, ElementTheme requestedTheme) where T : IRxFrameworkElement
         {
             frameworkelement.RequestedTheme = new PropertyValue<ElementTheme>(requestedTheme);
+            return frameworkelement;
+        }
+        public static T RequestedTheme<T>(this T frameworkelement, Func<ElementTheme> requestedThemeFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.RequestedTheme = new PropertyValue<ElementTheme>(requestedThemeFunc);
             return frameworkelement;
         }
         public static T Style<T>(this T frameworkelement, Style style) where T : IRxFrameworkElement
@@ -314,9 +421,19 @@ namespace ReactorWinUI
             frameworkelement.Style = new PropertyValue<Style>(style);
             return frameworkelement;
         }
+        public static T Style<T>(this T frameworkelement, Func<Style> styleFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.Style = new PropertyValue<Style>(styleFunc);
+            return frameworkelement;
+        }
         public static T Tag<T>(this T frameworkelement, object tag) where T : IRxFrameworkElement
         {
             frameworkelement.Tag = new PropertyValue<object>(tag);
+            return frameworkelement;
+        }
+        public static T Tag<T>(this T frameworkelement, Func<object> tagFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.Tag = new PropertyValue<object>(tagFunc);
             return frameworkelement;
         }
         public static T VerticalAlignment<T>(this T frameworkelement, VerticalAlignment verticalAlignment) where T : IRxFrameworkElement
@@ -324,9 +441,19 @@ namespace ReactorWinUI
             frameworkelement.VerticalAlignment = new PropertyValue<VerticalAlignment>(verticalAlignment);
             return frameworkelement;
         }
+        public static T VerticalAlignment<T>(this T frameworkelement, Func<VerticalAlignment> verticalAlignmentFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.VerticalAlignment = new PropertyValue<VerticalAlignment>(verticalAlignmentFunc);
+            return frameworkelement;
+        }
         public static T Width<T>(this T frameworkelement, double width) where T : IRxFrameworkElement
         {
             frameworkelement.Width = new PropertyValue<double>(width);
+            return frameworkelement;
+        }
+        public static T Width<T>(this T frameworkelement, Func<double> widthFunc) where T : IRxFrameworkElement
+        {
+            frameworkelement.Width = new PropertyValue<double>(widthFunc);
             return frameworkelement;
         }
         public static T OnLoaded<T>(this T frameworkelement, Action loadedAction) where T : IRxFrameworkElement

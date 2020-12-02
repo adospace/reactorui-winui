@@ -34,9 +34,9 @@ namespace ReactorWinUI.DemoApp
             {
                 new RxListBox()
                     .ItemsSource(State.Items)
-                    .SelectedItem(State.SelectedItem)
+                    //.SelectedItem(State.SelectedItem)
                     //.OnSelectionChanged<RxListBox, Item>(item => SetState(s => s.SelectedItem = item))
-                    .OnRenderItem((Item item) => new RxTextBlock().Text(item.Name).FontSize(12))
+                    //.OnRenderItem((Item item) => new RxTextBlock().Text(item.Name).FontSize(12))
                     .FontSize(24)
                     .VCenter()
                     .HCenter()

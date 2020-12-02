@@ -53,20 +53,19 @@ namespace ReactorWinUI
             //Console.WriteLine(Assembly.GetExecutingAssembly().GetName().Name);
 
             //new ItemTemplatePresenter();
-            if (NativeControl.ItemTemplate == null)
-            {
-                NativeControl.ItemTemplate = ItemTemplatePresenter.DataTemplate;
-            }            
+            //if (NativeControl.ItemTemplate == null)
+            //{
+            //    NativeControl.ItemTemplate = ItemTemplatePresenter.DataTemplate;
+            //}            
 
             var itemsSource = thisAsIRxItemsControl.ItemsSource?.Value;
 
-            if (itemsSource != null && thisAsIRxItemsControl.ItemTemplate != null)
+            if (itemsSource != null)
             {
-                var currentItemsSourceWrapper = NativeControl.ItemsSource as ItemsSourceWrapper;
-                if (currentItemsSourceWrapper == null ||
-                    currentItemsSourceWrapper.ItemsSource != itemsSource)
+                if (NativeControl.ItemsSource != itemsSource)
                 {
-                    NativeControl.ItemsSource = new ItemsSourceWrapper(itemsSource, thisAsIRxItemsControl.ItemTemplate.Value);
+                    NativeControl.ItemTemplate = ItemTemplatePresenter.CreateDataTemplate(thisAsIRxItemsControl.ItemTemplate.Value);
+                    NativeControl.ItemsSource = itemsSource;
                 }
             }
             else
@@ -76,23 +75,23 @@ namespace ReactorWinUI
         }
     }
 
-    internal class ItemsSourceWrapper : IReadOnlyList<ItemWrapper>
+    internal class ItemsSourceWrapper : IReadOnlyList<object>
     {
-        private readonly IReadOnlyList<ItemWrapper> _internalList;
+        private readonly IReadOnlyList<object> _internalList;
 
-        public ItemsSourceWrapper(IEnumerable itemsSource, IItemTemplateFactory itemTemplateFactory)
+        public ItemsSourceWrapper(IEnumerable itemsSource)
         {
-            _internalList = itemsSource.Cast<object>().Select(_ => new ItemWrapper(_, itemTemplateFactory)).ToList();
+            _internalList = itemsSource.Cast<object>().ToList();
             ItemsSource = itemsSource;
         }
 
         public IEnumerable ItemsSource { get; }
 
-        public ItemWrapper this[int index] => _internalList[index];
+        public object this[int index] => _internalList[index];
 
         public int Count => _internalList.Count;
 
-        public IEnumerator<ItemWrapper> GetEnumerator() => _internalList.GetEnumerator();
+        public IEnumerator<object> GetEnumerator() => _internalList.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => _internalList.GetEnumerator();
     }
@@ -149,14 +148,40 @@ namespace ReactorWinUI
 
     public class ItemTemplatePresenter : ContentControl
     {
-        internal static DataTemplate DataTemplate { get; } = (DataTemplate)XamlReader.Load(@"
+        private static Dictionary<Guid, (DataTemplate, IItemTemplateFactory)> _templates = new Dictionary<Guid, (DataTemplate, IItemTemplateFactory)>();
+        internal static DataTemplate CreateDataTemplate(IItemTemplateFactory templateFactory)
+        {
+            Guid itemsSourceId = Guid.NewGuid();
+            var templatePair = ((DataTemplate)XamlReader.Load($@"
                 <DataTemplate 
                     xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""
                     xmlns:reactorwinui=""using:ReactorWinUI"">
-                    <reactorwinui:ItemTemplatePresenter/>
-                </DataTemplate>");
+                    <reactorwinui:ItemTemplatePresenter ItemsSourceId=""{itemsSourceId}""/>
+                </DataTemplate>"), templateFactory);//
+
+            _templates.Add(itemsSourceId, templatePair);
+
+            return templatePair.Item1;
+        }
+
+        internal static bool RemoveTemplate(Guid itemsSourceId)
+            => _templates.Remove(itemsSourceId);
 
         private ItemTemplateNode _currentItemTemplateNode;
+
+
+
+        public string ItemsSourceId
+        {
+            get { return (string)GetValue(ItemsSourceIdProperty); }
+            set { SetValue(ItemsSourceIdProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ItemsSourceId.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ItemsSourceIdProperty =
+            DependencyProperty.Register("ItemsSourceId", typeof(string), typeof(ItemTemplatePresenter), new PropertyMetadata(null));
+
+        object _oldContext;
 
         public ItemTemplatePresenter()
         {
@@ -165,10 +190,20 @@ namespace ReactorWinUI
 
         private void ItemTemplatePresenter_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            if (args.NewValue is ItemWrapper itemWrapper)
+            args.Handled = true;
+
+            if (_oldContext == args.NewValue)
+                return;
+
+            if (args.NewValue != null)
             {
+                if (!_templates.TryGetValue(Guid.Parse(ItemsSourceId), out var templatePair))
+                {
+                    throw new InvalidOperationException();
+                }
+
                 _currentItemTemplateNode ??= new ItemTemplateNode();
-                _currentItemTemplateNode.Root = itemWrapper.ItemTemplateFactory.GetRootVisualNode(itemWrapper.Item);
+                _currentItemTemplateNode.Root = templatePair.Item2.GetRootVisualNode(args.NewValue);
                 _currentItemTemplateNode.Layout();
 
                 Content = _currentItemTemplateNode.RootControl;
@@ -178,6 +213,8 @@ namespace ReactorWinUI
                 _currentItemTemplateNode = null;
                 Content = null;
             }
+
+            _oldContext = args.NewValue;
         }
 
 
@@ -254,17 +291,17 @@ namespace ReactorWinUI
     //    void RegisterTemplate(ItemTemplateNode itemTemplateNode);
     //}
 
-    internal class ItemWrapper
-    {
-        public ItemWrapper(object item, IItemTemplateFactory itemTemplateFactory)
-        {
-            Item = item;
-            ItemTemplateFactory = itemTemplateFactory;
-        }
+    //internal class ItemWrapper : IEquatable<ItemWrapper>
+    //{
+    //    public ItemWrapper(object item, IItemTemplateFactory itemTemplateFactory)
+    //    {
+    //        Item = item;
+    //        ItemTemplateFactory = itemTemplateFactory;
+    //    }
 
-        public object Item { get; }
-        public IItemTemplateFactory ItemTemplateFactory { get; }
-    }
+    //    public object Item { get; }
+    //    public IItemTemplateFactory ItemTemplateFactory { get; }
+    //}
 
     public interface IItemTemplateFactory
     {

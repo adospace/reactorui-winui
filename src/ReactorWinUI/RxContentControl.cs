@@ -50,8 +50,8 @@ namespace ReactorWinUI
             OnBeginUpdate();
 
             var thisAsIRxContentControl = (IRxContentControl)this;
-            NativeControl.Set(this, ContentControl.ContentProperty, thisAsIRxContentControl.Content);
-            NativeControl.Set(this, ContentControl.ContentTransitionsProperty, thisAsIRxContentControl.ContentTransitions);
+            SetPropertyValue(NativeControl, ContentControl.ContentProperty, thisAsIRxContentControl.Content);
+            SetPropertyValue(NativeControl, ContentControl.ContentTransitionsProperty, thisAsIRxContentControl.ContentTransitions);
 
             base.OnUpdate();
 
@@ -63,21 +63,33 @@ namespace ReactorWinUI
 
         protected override void OnAttachNativeEvents()
         {
+            OnBeginAttachNativeEvents();
+
             var thisAsIRxContentControl = (IRxContentControl)this;
 
             base.OnAttachNativeEvents();
+
+            OnEndAttachNativeEvents();
         }
 
 
         protected override void OnDetachNativeEvents()
         {
+            OnBeginDetachNativeEvents();
+
             if (NativeControl != null)
             {
             }
 
             base.OnDetachNativeEvents();
+
+            OnEndDetachNativeEvents();
         }
 
+        partial void OnBeginAttachNativeEvents();
+        partial void OnEndAttachNativeEvents();
+        partial void OnBeginDetachNativeEvents();
+        partial void OnEndDetachNativeEvents();
     }
     public partial class RxContentControl : RxContentControl<ContentControl>
     {
@@ -99,9 +111,19 @@ namespace ReactorWinUI
             contentcontrol.Content = new PropertyValue<object>(content);
             return contentcontrol;
         }
+        public static T Content<T>(this T contentcontrol, Func<object> contentFunc) where T : IRxContentControl
+        {
+            contentcontrol.Content = new PropertyValue<object>(contentFunc);
+            return contentcontrol;
+        }
         public static T ContentTransitions<T>(this T contentcontrol, TransitionCollection contentTransitions) where T : IRxContentControl
         {
             contentcontrol.ContentTransitions = new PropertyValue<TransitionCollection>(contentTransitions);
+            return contentcontrol;
+        }
+        public static T ContentTransitions<T>(this T contentcontrol, Func<TransitionCollection> contentTransitionsFunc) where T : IRxContentControl
+        {
+            contentcontrol.ContentTransitions = new PropertyValue<TransitionCollection>(contentTransitionsFunc);
             return contentcontrol;
         }
     }

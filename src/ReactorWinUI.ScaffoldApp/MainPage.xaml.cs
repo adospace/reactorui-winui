@@ -43,6 +43,7 @@ namespace ReactorWinUI.ScaffoldApp
             lstTypes.ItemsSource = listOfElements;
 
             File.ReadAllLines("WidgetList.txt")
+                .Where(_ => !string.IsNullOrWhiteSpace(_))
                 .Select(_ => listOfElements.First(t => t.FullName == _))
                 .ToList()
                 .ForEach(_ => lstTypes.SelectedItems.Add(_));
